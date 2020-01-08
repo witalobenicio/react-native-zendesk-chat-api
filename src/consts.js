@@ -1,0 +1,22 @@
+export const emitters = {
+  CONNECTION: 'onConnectionUpdate',
+  CHAT_LOG: 'onChatLogUpdate',
+  TIMEOUT: 'onTimeoutReceived',
+};
+
+export const connectionTypes = {
+  CONNECTING: 'CONNECTING',
+  CLOSED: 'CLOSED',
+  CONNECTED: 'CONNECTED',
+  DISCONNECTED: 'DISCONNECTED',
+  NO_CONNECTION: 'NO_CONNECTION',
+  UNITIALIZED: 'UNITIALIZED',
+  UNKNOWN: 'UNKNOWN',
+};
+
+export const chatLogTypes = {
+  AGENT_MESSAGE: 'AGENT_MESSAGE',
+  AGENT_ATTACHMENT: 'AGENT_ATTACHMENT',
+  VISITOR_MESSAGE: 'VISITOR_MESSAGE',
+  VISITOR_ATTACHMENT: 'VISITOR_ATTACHMENT'
+};
