@@ -39,7 +39,7 @@ RCT_REMAP_METHOD(startChat,
 }
 
 
-RCT_EXPORT_METHOD(addChatLogObserver:(RCTResponseSenderBlock)callback)
+RCT_EXPORT_METHOD(addChatLogObserver)
 {
     dispatch_sync(dispatch_get_main_queue(), ^{
         [[ZDCChatAPI instance] addObserver:self forChatLogEvents:@selector(chatEvent:)];
@@ -48,7 +48,7 @@ RCT_EXPORT_METHOD(addChatLogObserver:(RCTResponseSenderBlock)callback)
     entries = [[NSMutableArray alloc] init];
 }
 
-RCT_EXPORT_METHOD(deleteChatLogObserver:(RCTResponseSenderBlock)callback)
+RCT_EXPORT_METHOD(deleteChatLogObserver)
 {
     hasChatLogListeners = NO;
     dispatch_sync(dispatch_get_main_queue(), ^{
@@ -67,7 +67,7 @@ RCT_EXPORT_METHOD(deleteChatLogObserver:(RCTResponseSenderBlock)callback)
             [entries addObject:item];
         }
     }
-    if (sizeDiff < 0) {
+    if (sizeDiff > 0) {
         NSMutableDictionary *item = [ItemFactory getDictionaryFromEntry:event];
         [entries addObject:item];
     }
@@ -79,12 +79,13 @@ RCT_EXPORT_METHOD(deleteChatLogObserver:(RCTResponseSenderBlock)callback)
 RCT_EXPORT_METHOD(addChatConnectionObserver)
 {
     hasConnectionListeners = YES;
+    NSLog(@"addChatConnection Mensagem");
     dispatch_sync(dispatch_get_main_queue(), ^{
         [[ZDCChatAPI instance] addObserver:self forConnectionEvents:@selector(connectionEvent:)];
     });
 }
 
-RCT_EXPORT_METHOD(deleteChatConnectionObserver:(RCTResponseSenderBlock)callback)
+RCT_EXPORT_METHOD(deleteChatConnectionObserver)
 {
     hasConnectionListeners = NO;
     dispatch_sync(dispatch_get_main_queue(), ^{
@@ -119,10 +120,11 @@ RCT_EXPORT_METHOD(deleteChatConnectionObserver:(RCTResponseSenderBlock)callback)
             statusText = @"UNKNOWN";
             break;
     }
+    NSLog(@"STATUS CONNECTION: %@", statusText);
     [self sendEventWithName:onConnectionUpdateEmitter body:@{@"status": statusText}];
 }
 
-RCT_EXPORT_METHOD(addChatTimeoutObserver:(RCTResponseSenderBlock)callback)
+RCT_EXPORT_METHOD(addChatTimeoutObserver)
 {
     hasTimeoutListeners = YES;
     dispatch_sync(dispatch_get_main_queue(), ^{
@@ -130,7 +132,7 @@ RCT_EXPORT_METHOD(addChatTimeoutObserver:(RCTResponseSenderBlock)callback)
     });
 }
 
-RCT_EXPORT_METHOD(deleteChatTimeoutObserver:(RCTResponseSenderBlock)callback)
+RCT_EXPORT_METHOD(deleteChatTimeoutObserver)
 {
     hasTimeoutListeners = NO;
     dispatch_sync(dispatch_get_main_queue(), ^{
@@ -145,10 +147,9 @@ RCT_EXPORT_METHOD(deleteChatTimeoutObserver:(RCTResponseSenderBlock)callback)
 
 RCT_EXPORT_METHOD(sendMessage:(NSString*)message)
 {
-    dispatch_sync(dispatch_get_main_queue(), ^{
+    
         NSLog(@"Mensagem: %@", message);
         [[ZDCChatAPI instance] sendChatMessage:message];
-    });
 }
 
 RCT_EXPORT_METHOD(sendFile:(NSString*)path)

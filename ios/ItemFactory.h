@@ -10,6 +10,6 @@
 
 @interface ItemFactory : NSObject
 
-+ (NSDictionary*) getDictionaryFromEntry: (ZDCChatEvent*) type;
++ (NSMutableDictionary*) getDictionaryFromEntry: (ZDCChatEvent*) type;
 
 @end
