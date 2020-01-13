@@ -36,11 +36,11 @@ RCT_REMAP_METHOD(startChat,
         [[ZDCChatAPI instance] setVisitorInfo:visitorInfo];
         if (userConfig != nil) {
             ZDCAPIConfig* config = [[ZDCAPIConfig alloc] init];
-            if (userConfig[@"department"]) {
+            if ([userConfig objectForKey:@"department"]) {
                 config.department = userConfig[@"department"];
             }
-            if (userConfig[@"tags"]) {
-                config.department = userConfig[@"tags"];
+            if ([userConfig objectForKey:@"tags"]) {
+                config.tags = userConfig[@"tags"];
             }
             [[ZDCChatAPI instance] startChatWithAccountKey:accountKey config:config];
         } else {

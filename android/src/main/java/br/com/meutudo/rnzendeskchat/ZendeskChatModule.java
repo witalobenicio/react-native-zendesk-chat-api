@@ -57,13 +57,14 @@ public class ZendeskChatModule extends ReactContextBaseJavaModule {
         this.setUserInfo(userInfo);
         ZopimChatApi.SessionConfig config = new ZopimChatApi.SessionConfig();
         if (userConfig != null) {
-            String department = userConfig.getString("department");
-            ReadableArray tags = userConfig.getArray("tags");
-            if (department != null) {
-                config.department(department);
+            if (userConfig.hasKey("department")) {
+                config.department(userConfig.getString("department"));
             }
-            if (tags != null && tags.toArrayList().size() > 0) {
-                config.tags(tags.toArrayList().toArray(new String[tags.toArrayList().size()]));
+            if (userConfig.hasKey("tags")) {
+                ReadableArray tags = userConfig.getArray("tags");
+                if (tags.toArrayList().size() > 0) {
+                    config.tags(tags.toArrayList().toArray(new String[tags.toArrayList().size()]));
+                }
             }
         }
         this.chatApi = config.build(currentActivity);
@@ -142,20 +143,20 @@ public class ZendeskChatModule extends ReactContextBaseJavaModule {
     private void setUserInfo(ReadableMap userInfo) {
         VisitorInfo.Builder visitorInfoBuilder = new VisitorInfo.Builder();
         VisitorInfo visitorInfo = visitorInfoBuilder.build();
-        String userName = userInfo.getString("name");
-        if (userName != null && !userName.equals("")) {
+        if (userInfo.hasKey("name")) {
+            String userName = userInfo.getString("name");
             visitorInfo.setName(userName);
         }
-        String userEmail = userInfo.getString("email");
-        if (userEmail != null && !userEmail.equals("")) {
+        if (userInfo.hasKey("email")) {
+            String userEmail = userInfo.getString("email");
             visitorInfo.setEmail(userEmail);
         }
-        String userPhone = userInfo.getString("phone");
-        if (userPhone != null && !userPhone.equals("")) {
+        if (userInfo.hasKey("phone")) {
+            String userPhone = userInfo.getString("phone");
             visitorInfo.setPhoneNumber(userPhone);
         }
-        String userNote = userInfo.getString("note");
-        if (userNote != null && !userNote.equals("")) {
+        if (userInfo.hasKey("note")) {
+            String userNote = userInfo.getString("note");
             visitorInfo.setNote(userNote);
         }
         ZopimChatApi.setVisitorInfo(visitorInfo);

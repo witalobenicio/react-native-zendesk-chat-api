@@ -37,8 +37,14 @@ const userInfo = {
   note: 'This visitor is very nice',
 };
 
+//Currently supporting just department and tag as config values
+const chatConfig = {
+  department: 'My Department',
+  tags: ['Tag1', 'Tag2'],
+};
+
 // This is a promise, but just to know that you called succesfully. In order to start sending messages, you need to wait until status === 'CONNECTED'
-ZendeskChatApi.startChat("YOUR_ACCOUNT_KEY", userInfo);
+ZendeskChatApi.startChat("YOUR_ACCOUNT_KEY", userInfo, chatConfig);
 ```
 
 ###End a chat session:
