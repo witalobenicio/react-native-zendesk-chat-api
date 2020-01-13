@@ -1,7 +1,7 @@
 {
   "name": "react-native-zendesk-chat-api",
   "title": "React Native Zendesk Chat API",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Library to provide access to Zendesk Chat API SDK methods",
   "main": "index.js",
   "scripts": {
@@ -9,11 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/github_account/react-native-zendesk-chat.git",
-    "baseUrl": "https://github.com/github_account/react-native-zendesk-chat"
+    "url": "git+https://github.com/enovarsolutions/react-native-zendesk-chat-api.git",
+    "baseUrl": "https://github.com/enovarsolutions/react-native-zendesk-chat-api"
   },
   "keywords": [
-    "react-native"
+    "react-native",
+    "zendesk",
+    "chat-api",
+    "api"
   ],
   "author": {
     "name": "Witalo Benicio",

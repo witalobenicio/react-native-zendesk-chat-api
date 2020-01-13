@@ -22,9 +22,111 @@ then you need to link the package:
 `$ react-native link react-native-zendesk-chat-api`
 
 ## Usage
+Import:
 ```javascript
-import ZendeskChat from 'react-native-zendesk-chat-api';
-
-// TODO: What to do with the module?
-ZendeskChat;
+import ZendeskChatApi from 'react-native-zendesk-chat-api';
 ```
+
+To start a chat session:
+
+```javascript
+const userInfo = {
+  name: 'Witalo Benicio',
+  email: 'contato@witalobenicio.com',
+  phone: '+558899999999',
+  note: 'This visitor is very nice',
+};
+
+// This is a promise, but just to know that you called succesfully. In order to start sending messages, you need to wait until status === 'CONNECTED'
+ZendeskChatApi.startChat("YOUR_ACCOUNT_KEY", userInfo);
+```
+
+To end a chat session:
+
+```javascript
+ZendeskChatApi.endChat();
+```
+
+To start listening to connection updates:
+
+```javascript
+const connectionUpdate = ({ status }) => {
+  if (status === ZendeskChatAPI.connectionTypes.CONNECTED) {
+    // You can send messages now
+  }
+};
+
+ZendeskChatApi.addConnectionObserver(connectionUpdate);
+```
+
+To stop listening to connection updates:
+
+```javascript
+//Remember to do this
+ZendeskChatApi.deleteChatConnectionObserver();
+```
+
+To start listening to chat updates:
+
+```javascript
+const chatUpdate = (entries) => {
+  //entries is an Array, so you can handle every message to show in your FlatList e.g.
+  //Every entry has a type, which at the moment can be found at:
+  ZendeskChatAPI.chatLogTypes.VISITOR_ATTACHMENT; //This is a file sent by the user
+  ZendeskChatAPI.chatLogTypes.VISITOR_MESSAGE; //This is a message sent by the user
+  ZendeskChatAPI.chatLogTypes.AGENT_ATTACHMENT; //This is a file sent by an agent
+  ZendeskChatAPI.chatLogTypes.AGENT_MESSAGE; //This is a message sent by an agent
+};
+
+ZendeskChatApi.addChatLogObserver(chatUpdate);
+```
+
+To stop listening to chat updates:
+
+```javascript
+//Remember to do this
+ZendeskChatApi.deleteChatLogObserver();
+```
+
+To start listening for timeout event:
+
+```javascript
+const onTimeoutReceived = ({ timeout }) => {
+};
+
+ZendeskChatApi.addChatTimeoutObserver(onTimeoutReceived);
+```
+To stop listening for timeout event:
+
+```javascript
+//Remember to do this
+ZendeskChatApi.deleteChatTimeoutObserver();
+```
+Get a list of live chat messages:
+
+```javascript
+ZendeskChatApi.getChatLog()
+  .then(entries => {
+    // Do your stuff
+  });
+```
+Send a message:
+
+```javascript
+ZendeskChatApi.sendMessage("My message goes here");
+```
+
+Send a file:
+
+```javascript
+// You need to ensure that you will only send files with supported extensions
+// This is defined on your Zendesk Chat Dashboard
+ZendeskChatApi.sendFile("path/to/myFile");
+```
+
+#Next planned steps
+
+- Listening to file uploads (error handling)
+- Handle messages errors
+- Set tags to the chat
+- Set a department when starting a chat
