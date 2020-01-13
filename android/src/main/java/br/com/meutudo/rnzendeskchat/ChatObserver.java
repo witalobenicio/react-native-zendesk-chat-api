@@ -26,25 +26,26 @@ public class ChatObserver extends ChatItemsObserver {
 
     @Override
     protected void updateChatItems(TreeMap<String, RowItem> rowItems) {
-        if (items == null) {
+//        if (items == null) {
             items = new WritableNativeArray();
-            RowItem[] rowItemsArr = (RowItem[]) rowItems.values().toArray();
-            String[] keys = (String[]) rowItems.keySet().toArray();
+            Object[] rowItemsArr = rowItems.values().toArray();
+            Object[] keys = rowItems.keySet().toArray();
             for (int i = 0; i < rowItems.size(); i++) {
-                RowItem rowItem = rowItemsArr[i];
-                String id = keys[i];
+                RowItem rowItem = (RowItem) rowItemsArr[i];
+                String id = (String) keys[i];
                 WritableMap itemMap = ItemFactory.getReadableMapFromRowItem(id, rowItem);
                 items.pushMap(itemMap);
             }
-        } else {
-            int sizeDiff = rowItems.size() - items.size();
-            if (sizeDiff > 0) {
-                RowItem rowItem = (RowItem) rowItems.lastEntry();
-                String id = rowItems.lastKey();
-                WritableMap itemMap = ItemFactory.getReadableMapFromRowItem(id, rowItem);
-                items.pushMap(itemMap);
-            }
-        }
+//        }
+//        else {
+//            int sizeDiff = rowItems.size() - items.size();
+//            if (sizeDiff > 0) {
+//                RowItem rowItem = rowItems.lastEntry().getValue();
+//                String id = rowItems.lastKey();
+//                WritableMap itemMap = ItemFactory.getReadableMapFromRowItem(id, rowItem);
+//                items.pushMap(itemMap);
+//            }
+//        }
         this.context
                 .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                 .emit(ZendeskChatModule.onChatLogUpdateEmitter, items);

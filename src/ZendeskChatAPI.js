@@ -11,6 +11,13 @@ let timeoutSubscription;
 const startChat = async (accountKey, userInfo) => {
   return ZendeskChat.startChat(accountKey, userInfo);
 };
+const endChat = () => {
+  ZendeskChat.endChat();
+};
+
+const getChatLog = async () => {
+  return ZendeskChat.getChatLog();
+};
 
 const addChatLogObserver = (callback) => {
   ZendeskChat.addChatLogObserver();
@@ -63,6 +70,8 @@ const sendFile = (path) => {
 
 export default {
   startChat,
+  endChat,
+  getChatLog,
   addChatLogObserver,
   deleteChatLogObserver,
   addChatConnectionObserver,

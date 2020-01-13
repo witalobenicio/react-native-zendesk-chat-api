@@ -14,9 +14,23 @@ export const connectionTypes = {
   UNKNOWN: 'UNKNOWN',
 };
 
-export const chatLogTypes = {
+const chatTypes = {
   AGENT_MESSAGE: 'AGENT_MESSAGE',
   AGENT_ATTACHMENT: 'AGENT_ATTACHMENT',
   VISITOR_MESSAGE: 'VISITOR_MESSAGE',
-  VISITOR_ATTACHMENT: 'VISITOR_ATTACHMENT'
+  VISITOR_ATTACHMENT: 'VISITOR_ATTACHMENT',
+};
+
+const chatTypesAsArray = () => {
+  return [
+    chatTypes.AGENT_ATTACHMENT,
+    chatTypes.AGENT_MESSAGE,
+    chatTypes.VISITOR_ATTACHMENT,
+    chatTypes.VISITOR_MESSAGE,
+  ]
+};
+
+export const chatLogTypes = {
+  ...chatTypes,
+  asArray: chatTypesAsArray,
 };

@@ -19,10 +19,12 @@ import com.zopim.android.sdk.api.ChatApi;
 import com.zopim.android.sdk.api.ChatSession;
 import com.zopim.android.sdk.api.ZopimChatApi;
 import com.zopim.android.sdk.data.observers.ChatItemsObserver;
+import com.zopim.android.sdk.model.ChatLog;
 import com.zopim.android.sdk.model.VisitorInfo;
 import com.zopim.android.sdk.model.items.RowItem;
 
 import java.io.File;
+import java.util.LinkedHashMap;
 import java.util.TreeMap;
 
 public class ZendeskChatModule extends ReactContextBaseJavaModule {
@@ -54,6 +56,19 @@ public class ZendeskChatModule extends ReactContextBaseJavaModule {
         this.setUserInfo(userInfo);
         this.chatApi = ZopimChatApi.start(currentActivity);
         promise.resolve(true);
+    }
+
+    @ReactMethod
+    public void endChat() {
+        if (this.chatApi != null) {
+            this.chatApi.endChat();
+        }
+    }
+
+    @ReactMethod
+    public void getChatLog(Promise promise) {
+        LinkedHashMap<String, ChatLog> entries = ZopimChatApi.getDataSource().getChatLog();
+        promise.resolve(ItemFactory.getArrayFromEntries(entries));
     }
 
     @ReactMethod

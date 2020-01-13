@@ -38,6 +38,27 @@ RCT_REMAP_METHOD(startChat,
     });
 }
 
+RCT_EXPORT_METHOD(endChat)
+{
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [[ZDCChatAPI instance] endChat];
+    });
+}
+
+RCT_REMAP_METHOD(getChatLog,
+                 getChatLogWithResolver:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject
+                 )
+{
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        if (entries.count == 0) {
+            entries = [[NSMutableArray alloc] init];
+        }
+        NSArray* events = [[ZDCChatAPI instance] livechatLog];
+        entries = [ItemFactory getArrayFromEntries:events];
+        resolve(entries);
+    });
+}
 
 RCT_EXPORT_METHOD(addChatLogObserver)
 {
@@ -45,7 +66,9 @@ RCT_EXPORT_METHOD(addChatLogObserver)
         [[ZDCChatAPI instance] addObserver:self forChatLogEvents:@selector(chatEvent:)];
     });
     hasChatLogListeners = YES;
-    entries = [[NSMutableArray alloc] init];
+    if (entries.count == 0) {
+        entries = [[NSMutableArray alloc] init];
+    }
 }
 
 RCT_EXPORT_METHOD(deleteChatLogObserver)
@@ -72,7 +95,7 @@ RCT_EXPORT_METHOD(deleteChatLogObserver)
         [entries addObject:item];
     }
     //TODO: Emit Chat EVENT
-    [self sendEventWithName:onChatLogReceivedEmitter body:@{@"entries": entries}];
+    [self sendEventWithName:onChatLogReceivedEmitter body:entries];
 //    logCallback(@[entries]);
 }
 

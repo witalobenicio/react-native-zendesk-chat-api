@@ -10,6 +10,15 @@
 
 @implementation ItemFactory : NSObject
 
++ (NSMutableArray *) getArrayFromEntries: (NSArray *) events {
+    NSMutableArray* entries = [[NSMutableArray alloc] init];
+    for (int i = 0; i < events.count; i++) {
+        NSMutableDictionary *item = [ItemFactory getDictionaryFromEntry:events[i]];
+        [entries addObject:item];
+    }
+    return entries;
+}
+
 + (NSMutableDictionary *)getDictionaryFromEntry:(ZDCChatEvent*) entry {
     switch (entry.type) {
         case ZDCChatEventTypeAgentMessage:
@@ -54,8 +63,11 @@
     NSMutableDictionary * agentAttachmentDict = [self getDefaultDict:item];
     [agentAttachmentDict setValue:@"AGENT_ATTACHMENT" forKey:@"type"];
     if (item.attachment != nil) {
+        NSString* name = item.attachment.fileName;
+        NSString* extension = [[name componentsSeparatedByString:@"."] objectAtIndex:1];
         [agentAttachmentDict setValue:item.attachment.fileName forKey:@"attachmentName"];
         [agentAttachmentDict setValue:item.attachment.fileSize forKey:@"attachmentSize"];
+        [agentAttachmentDict setValue:extension forKey:@"attachmentExtension"];
         [agentAttachmentDict setValue:item.attachment.url forKey:@"absolutePath"];
         [agentAttachmentDict setValue:item.attachment.url forKey:@"path"];
     }
@@ -68,6 +80,9 @@
     if (item.attachment != nil) {
         [visitorAttachmentDict setValue:item.attachment.fileName forKey:@"attachmentName"];
         [visitorAttachmentDict setValue:item.attachment.fileSize forKey:@"attachmentSize"];
+        [visitorAttachmentDict setValue:item.fileUpload.fileExtension forKey:@"attachmentExtension"];
+        [visitorAttachmentDict setValue:[NSNumber numberWithFloat:item.fileUpload.progress] forKey:@"uploadProgress"];
+        [visitorAttachmentDict setValue:item.fileUpload.uploadURL forKey:@"uploadUrl"];
         [visitorAttachmentDict setValue:item.attachment.url forKey:@"absolutePath"];
         [visitorAttachmentDict setValue:item.attachment.url forKey:@"path"];
     }
