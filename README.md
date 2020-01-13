@@ -22,12 +22,12 @@ then you need to link the package:
 `$ react-native link react-native-zendesk-chat-api`
 
 ## Usage
-Import:
+###Import:
 ```javascript
 import ZendeskChatApi from 'react-native-zendesk-chat-api';
 ```
 
-To start a chat session:
+###Start a chat session:
 
 ```javascript
 const userInfo = {
@@ -41,13 +41,13 @@ const userInfo = {
 ZendeskChatApi.startChat("YOUR_ACCOUNT_KEY", userInfo);
 ```
 
-To end a chat session:
+###End a chat session:
 
 ```javascript
 ZendeskChatApi.endChat();
 ```
 
-To start listening to connection updates:
+###Start listening to connection updates:
 
 ```javascript
 const connectionUpdate = ({ status }) => {
@@ -59,14 +59,14 @@ const connectionUpdate = ({ status }) => {
 ZendeskChatApi.addConnectionObserver(connectionUpdate);
 ```
 
-To stop listening to connection updates:
+###Stop listening to connection updates:
 
 ```javascript
 //Remember to do this
 ZendeskChatApi.deleteChatConnectionObserver();
 ```
 
-To start listening to chat updates:
+###Start listening to chat updates:
 
 ```javascript
 const chatUpdate = (entries) => {
@@ -81,14 +81,14 @@ const chatUpdate = (entries) => {
 ZendeskChatApi.addChatLogObserver(chatUpdate);
 ```
 
-To stop listening to chat updates:
+###Stop listening to chat updates:
 
 ```javascript
 //Remember to do this
 ZendeskChatApi.deleteChatLogObserver();
 ```
 
-To start listening for timeout event:
+###Start listening to timeout event:
 
 ```javascript
 const onTimeoutReceived = ({ timeout }) => {
@@ -96,13 +96,13 @@ const onTimeoutReceived = ({ timeout }) => {
 
 ZendeskChatApi.addChatTimeoutObserver(onTimeoutReceived);
 ```
-To stop listening for timeout event:
+###Stop listening to timeout event:
 
 ```javascript
 //Remember to do this
 ZendeskChatApi.deleteChatTimeoutObserver();
 ```
-Get a list of live chat messages:
+###Get a list of live chat messages:
 
 ```javascript
 ZendeskChatApi.getChatLog()
@@ -110,13 +110,13 @@ ZendeskChatApi.getChatLog()
     // Do your stuff
   });
 ```
-Send a message:
+###Send a message:
 
 ```javascript
 ZendeskChatApi.sendMessage("My message goes here");
 ```
 
-Send a file:
+###Send a file:
 
 ```javascript
 // You need to ensure that you will only send files with supported extensions
