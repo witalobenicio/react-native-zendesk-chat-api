@@ -14,6 +14,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.zopim.android.sdk.api.ChatApi;
 import com.zopim.android.sdk.api.ChatSession;
@@ -50,11 +51,22 @@ public class ZendeskChatModule extends ReactContextBaseJavaModule {
 
 
     @ReactMethod
-    public void startChat(String accountKey, ReadableMap userInfo, Promise promise) {
+    public void startChat(String accountKey, ReadableMap userInfo, ReadableMap userConfig, Promise promise) {
         ZopimChatApi.init(accountKey);
         AppCompatActivity currentActivity = (AppCompatActivity) getCurrentActivity();
         this.setUserInfo(userInfo);
-        this.chatApi = ZopimChatApi.start(currentActivity);
+        ZopimChatApi.SessionConfig config = new ZopimChatApi.SessionConfig();
+        if (userConfig != null) {
+            String department = userConfig.getString("department");
+            ReadableArray tags = userConfig.getArray("tags");
+            if (department != null) {
+                config.department(department);
+            }
+            if (tags != null && tags.toArrayList().size() > 0) {
+                config.tags(tags.toArrayList().toArray(new String[tags.toArrayList().size()]));
+            }
+        }
+        this.chatApi = config.build(currentActivity);
         promise.resolve(true);
     }
 

@@ -23,8 +23,9 @@
 RCT_EXPORT_MODULE()
 
 RCT_REMAP_METHOD(startChat,
-                 accountKey:(NSString *)accountKey
-                 userInfo:(NSDictionary *)userInfo
+                  accountKey:(NSString *)accountKey
+                  userInfo:(NSDictionary *)userInfo
+                  userConfig:(NSDictionary *)userConfig
                  startChatWithResolver:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject) {
     ZDCVisitorInfo* visitorInfo = [[ZDCVisitorInfo alloc] init];
@@ -33,7 +34,18 @@ RCT_REMAP_METHOD(startChat,
     visitorInfo.phone = userInfo[@"phone"];
     dispatch_sync(dispatch_get_main_queue(), ^{
         [[ZDCChatAPI instance] setVisitorInfo:visitorInfo];
-        [[ZDCChatAPI instance] startChatWithAccountKey:accountKey];
+        if (userConfig != nil) {
+            ZDCAPIConfig* config = [[ZDCAPIConfig alloc] init];
+            if (userConfig[@"department"]) {
+                config.department = userConfig[@"department"];
+            }
+            if (userConfig[@"tags"]) {
+                config.department = userConfig[@"tags"];
+            }
+            [[ZDCChatAPI instance] startChatWithAccountKey:accountKey config:config];
+        } else {
+            [[ZDCChatAPI instance] startChatWithAccountKey:accountKey];
+        }
         resolve([NSNumber numberWithBool:YES]);
     });
 }

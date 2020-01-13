@@ -1,3 +1,5 @@
+// @flow
+
 import { NativeModules, NativeEventEmitter } from 'react-native';
 import { emitters, chatLogTypes, connectionTypes } from './consts';
 
@@ -8,8 +10,19 @@ let chatLogSubscription;
 let connectionSubscription;
 let timeoutSubscription;
 
-const startChat = async (accountKey, userInfo) => {
-  return ZendeskChat.startChat(accountKey, userInfo);
+type UserInfo = {
+  name: string,
+  email: string,
+  phone: string,
+  note: string,
+};
+type UserConfig = {
+  department: string,
+  tags: Array<string>,
+};
+
+const startChat = async (accountKey: string, userInfo: UserInfo, userConfig: UserConfig) => {
+  return ZendeskChat.startChat(accountKey, userInfo, userConfig);
 };
 const endChat = () => {
   ZendeskChat.endChat();
@@ -19,9 +32,25 @@ const getChatLog = async () => {
   return ZendeskChat.getChatLog();
 };
 
-const addChatLogObserver = (callback) => {
+type ChatLog = {
+  id: string,
+  participantId?: string,
+  type: string,
+  name: string,
+  timestamp: number,
+  message?: string,
+  attachmentPath?: string,
+  attachmentSize?: number,
+  attachmentExtension?: number,
+  uploadUrl?: number,
+  error?: string,
+  absolutePath?: string,
+  path?: string,
+};
+
+const addChatLogObserver = (callback: (Array<ChatLog>) => void) => {
   ZendeskChat.addChatLogObserver();
-  chatLogSubscription = ZendeskChatEmitter.addListener(emitters.CHAT_LOG, (items) => {
+  chatLogSubscription = ZendeskChatEmitter.addListener(emitters.CHAT_LOG, (items: Array<ChatLog>) => {
     callback(items);
   })
 };
@@ -33,9 +62,9 @@ const deleteChatLogObserver = () => {
   ZendeskChat.deleteChatLogObserver();
 };
 
-const addChatConnectionObserver = (callback) => {
+const addChatConnectionObserver = (callback: (string) => void) => {
   ZendeskChat.addChatConnectionObserver();
-  connectionSubscription = ZendeskChatEmitter.addListener(emitters.CONNECTION, (connection) => {
+  connectionSubscription = ZendeskChatEmitter.addListener(emitters.CONNECTION, (connection: string) => {
     callback(connection);
   })
 };
@@ -47,9 +76,9 @@ const deleteChatConnectionObserver = () => {
   ZendeskChat.deleteChatConnectionObserver();
 };
 
-const addChatTimeoutObserver = (callback) => {
+const addChatTimeoutObserver = (callback: (boolean) => void) => {
   ZendeskChat.addChatTimeoutObserver();
-  timeoutSubscription = ZendeskChatEmitter.addListener(emitters.TIMEOUT, (timeout) => {
+  timeoutSubscription = ZendeskChatEmitter.addListener(emitters.TIMEOUT, (timeout: boolean) => {
     callback(timeout);
   })
 };
@@ -60,11 +89,11 @@ const deleteChatTimeoutObserver = () => {
   }
 };
 
-const sendMessage = (message) => {
+const sendMessage = (message: string) => {
   ZendeskChat.sendMessage(message);
 };
 
-const sendFile = (path) => {
+const sendFile = (path: string) => {
   ZendeskChat.sendFile(path);
 };
 
