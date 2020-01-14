@@ -1,30 +1,30 @@
-# react-native-zendesk-chat
+# rn-zendesk-chat-api
 Wrapper around Zendesk Chat API SDK for mobile Android and iOS
 
 ## Getting started
 
-`$ npm install react-native-zendesk-chat --save`
+`$ npm install rn-zendesk-chat --save`
 
 ### Mostly automatic installation
 
-`$ react-native link react-native-zendesk-chat-api`
+`$ react-native link rn-zendesk-chat-api`
 <br />
 
 or if you prefer:
 <br />
 
-`$ yarn add global react-native-zendesk-chat-api`
+`$ yarn add global rn-zendesk-chat-api`
 <br />
 
 then you need to link the package:
 <br />
 
-`$ react-native link react-native-zendesk-chat-api`
+`$ react-native link rn-zendesk-chat-api`
 
 ## Usage
 ###Import:
 ```javascript
-import ZendeskChatApi from 'react-native-zendesk-chat-api';
+import ZendeskChatApi from 'rn-zendesk-chat-api';
 ```
 
 ###Start a chat session:

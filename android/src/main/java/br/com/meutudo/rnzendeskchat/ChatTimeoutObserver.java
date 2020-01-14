@@ -25,7 +25,7 @@ public class ChatTimeoutObserver extends BroadcastReceiver {
             timeout.putBoolean("timeout", true);
             this.context
                     .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                    .emit(ZendeskChatModule.onChatLogUpdateEmitter, timeout);
+                    .emit(ZendeskChatModule.onTimeoutReceivedEmitter, timeout);
         }
     }
 }

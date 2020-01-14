@@ -1,7 +1,7 @@
 {
-  "name": "@witalobenicio/react-native-zendesk-chat-api",
+  "name": "rn-zendesk-chat-api",
   "title": "React Native Zendesk Chat API",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Library to provide access to Zendesk Chat API SDK methods",
   "main": "index.js",
   "scripts": {

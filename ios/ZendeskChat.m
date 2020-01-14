@@ -210,4 +210,3 @@ RCT_EXPORT_METHOD(sendFile:(NSString*)path)
 }
 
 @end
-

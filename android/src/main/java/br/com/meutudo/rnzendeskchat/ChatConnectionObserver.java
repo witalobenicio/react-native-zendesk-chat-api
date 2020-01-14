@@ -29,6 +29,6 @@ public class ChatConnectionObserver extends ConnectionObserver {
         status.putString("status", connection.toString());
         this.context
                 .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit(ZendeskChatModule.onChatLogUpdateEmitter, status);
+                .emit(ZendeskChatModule.onConnectionUpdateEmitter, status);
     }
 }
