@@ -137,6 +137,25 @@ public class ItemFactory {
         visitorMessage.putString("participantId", id);
         visitorMessage.putString("message", item.getMessage());
         visitorMessage.putString("type", "VISITOR_MESSAGE");
+        if (item.getAttachment() != null) {
+            try {
+                String path = item.getFile().getPath();
+                visitorMessage.putString("participantId", id);
+                visitorMessage.putString("attachmentName", item.getFile().getName());
+                visitorMessage.putDouble("attachmentSize", item.getFile().length());
+                visitorMessage.putString("attachmentExtension", path.substring(path.lastIndexOf(".")));
+                visitorMessage.putString("absolutePath", item.getFile().getAbsolutePath());
+                visitorMessage.putString("uploadUrl", item.getUploadUrl().toString());
+                visitorMessage.putString("error", item.getError().getValue());
+                visitorMessage.putString("path", path);
+                visitorMessage.putString("type", "VISITOR_ATTACHMENT");
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+                Log.d("ERROR CHAT", Log.getStackTraceString(e));
+            } catch (Exception e) {
+                Log.d("ERROR CHAT", Log.getStackTraceString(e));
+            }
+        }
         return visitorMessage;
     }
 
@@ -184,16 +203,32 @@ public class ItemFactory {
     private static WritableMap getVisitorAttachmentMap(String id, ChatLog item) {
         WritableMap visitorFile = getDefaultMap(id, item);
         try {
-            String path = item.getFile().getPath();
             visitorFile.putString("participantId", id);
-            visitorFile.putString("attachmentName", item.getFile().getName());
-            visitorFile.putDouble("attachmentSize", item.getFile().length());
-            visitorFile.putString("attachmentExtension", path.substring(path.lastIndexOf(".")));
-            visitorFile.putString("absolutePath", item.getFile().getAbsolutePath());
-            visitorFile.putString("uploadUrl", item.getUploadUrl().toString());
-            visitorFile.putString("error", item.getError().getValue());
-            visitorFile.putString("path", path);
+            if (item.getFile() != null) {
+                // User is sending the file
+                String path = item.getFile().getPath();
+                visitorFile.putString("attachmentName", item.getFileName());
+                visitorFile.putDouble("attachmentSize", item.getFile().length());
+                visitorFile.putString("attachmentExtension", path.substring(path.lastIndexOf(".")));
+                visitorFile.putString("absolutePath", item.getFile().getAbsolutePath());
+                if (item.getUploadUrl() != null) {
+                    visitorFile.putString("uploadUrl", item.getUploadUrl().toString());
+                }
+                visitorFile.putDouble("progress", item.getProgress());
+                visitorFile.putString("path", path);
+            } else {
+                // User sent the file
+                String path = item.getAttachment().getUrl().toString();
+                visitorFile.putString("attachmentName", item.getAttachment().getName());
+                visitorFile.putDouble("attachmentSize", item.getAttachment().getSize());
+                visitorFile.putString("attachmentExtension", path.substring(path.lastIndexOf(".")));
+                visitorFile.putString("absolutePath", item.getAttachment().getUrl().toString());
+                visitorFile.putString("path", path);
+            }
             visitorFile.putString("type", "VISITOR_ATTACHMENT");
+            if (item.getError() != null) {
+                visitorFile.putString("error", item.getError().getValue());
+            }
         } catch (NullPointerException e) {
             e.printStackTrace();
             Log.d("ERROR CHAT", Log.getStackTraceString(e));

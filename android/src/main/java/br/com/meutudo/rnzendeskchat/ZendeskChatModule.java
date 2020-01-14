@@ -1,32 +1,24 @@
 package br.com.meutudo.rnzendeskchat;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.content.IntentFilter;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.zopim.android.sdk.api.ChatApi;
 import com.zopim.android.sdk.api.ChatSession;
 import com.zopim.android.sdk.api.ZopimChatApi;
-import com.zopim.android.sdk.data.observers.ChatItemsObserver;
 import com.zopim.android.sdk.model.ChatLog;
 import com.zopim.android.sdk.model.VisitorInfo;
-import com.zopim.android.sdk.model.items.RowItem;
 
 import java.io.File;
 import java.util.LinkedHashMap;
-import java.util.TreeMap;
 
 public class ZendeskChatModule extends ReactContextBaseJavaModule {
 
@@ -136,7 +128,10 @@ public class ZendeskChatModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void sendFile(String path) {
         if (this.chatApi != null && !TextUtils.isEmpty(path)) {
-            chatApi.send(new File(path));
+            File file = new File(path);
+            if (file.exists()) {
+                chatApi.send(new File(path));
+            }
         }
     }
 
