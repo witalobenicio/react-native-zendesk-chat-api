@@ -14,7 +14,9 @@
     NSMutableArray* entries = [[NSMutableArray alloc] init];
     for (int i = 0; i < events.count; i++) {
         NSMutableDictionary *item = [ItemFactory getDictionaryFromEntry:events[i]];
-        [entries addObject:item];
+        if (item != nil) {
+            [entries addObject:item];
+        }
     }
     return entries;
 }
@@ -39,52 +41,77 @@
 
 + (NSMutableDictionary *) getDefaultDict: (ZDCChatEvent*) item {
     NSMutableDictionary * defaultDict = [[NSMutableDictionary alloc] init];
-    [defaultDict setValue:item.eventId forKey:@"id"];
-    [defaultDict setValue:item.timestamp forKey:@"timestamp"];
-    [defaultDict setValue:item.displayName forKey:@"name"];
-    return defaultDict;
+    if (item != nil) {
+        if (item.eventId) {
+            [defaultDict setValue:item.eventId forKey:@"id"];
+        }
+        if (item.timestamp) {
+            [defaultDict setValue:item.timestamp forKey:@"timestamp"];
+        }
+        if (item.displayName) {
+            [defaultDict setValue:item.displayName forKey:@"name"];
+        }
+        return defaultDict;
+    }
+    return nil;
 }
 
 + (NSMutableDictionary *) getAgentMessageDict: (ZDCChatEvent*) item {
     NSMutableDictionary * agentMessageDict = [self getDefaultDict:item];
-    [agentMessageDict setValue:@"AGENT_MESSAGE" forKey:@"type"];
-    [agentMessageDict setValue:item.message forKey:@"message"];
+    if (agentMessageDict != nil) {
+        if (item.message) {
+            [agentMessageDict setValue:item.message forKey:@"message"];
+        }
+        [agentMessageDict setValue:@"AGENT_MESSAGE" forKey:@"type"];
+    }
     return agentMessageDict;
 }
 
 + (NSMutableDictionary *) getVisitorMessageDict: (ZDCChatEvent*) item {
     NSMutableDictionary * visitorMessageDict = [self getDefaultDict:item];
-    [visitorMessageDict setValue:@"VISITOR_MESSAGE" forKey:@"type"];
-    [visitorMessageDict setValue:item.message forKey:@"message"];
+    if (visitorMessageDict != nil) {
+        [visitorMessageDict setValue:@"VISITOR_MESSAGE" forKey:@"type"];
+        [visitorMessageDict setValue:item.message forKey:@"message"];
+    }
     return visitorMessageDict;
 }
 
 + (NSMutableDictionary *) getAgentAttachmentDict: (ZDCChatEvent*) item {
     NSMutableDictionary * agentAttachmentDict = [self getDefaultDict:item];
-    [agentAttachmentDict setValue:@"AGENT_ATTACHMENT" forKey:@"type"];
-    if (item.attachment != nil) {
-        NSString* name = item.attachment.fileName;
-        NSString* extension = [[name componentsSeparatedByString:@"."] objectAtIndex:1];
-        [agentAttachmentDict setValue:item.attachment.fileName forKey:@"attachmentName"];
-        [agentAttachmentDict setValue:item.attachment.fileSize forKey:@"attachmentSize"];
-        [agentAttachmentDict setValue:extension forKey:@"attachmentExtension"];
-        [agentAttachmentDict setValue:item.attachment.url forKey:@"absolutePath"];
-        [agentAttachmentDict setValue:item.attachment.url forKey:@"path"];
+    if (agentAttachmentDict != nil) {
+        [agentAttachmentDict setValue:@"AGENT_ATTACHMENT" forKey:@"type"];
+        if (item.attachment != nil) {
+            NSString* name = item.attachment.fileName;
+            NSString* extension = [name pathExtension];
+            [agentAttachmentDict setValue:item.attachment.fileName forKey:@"attachmentName"];
+            [agentAttachmentDict setValue:item.attachment.fileSize forKey:@"attachmentSize"];
+            [agentAttachmentDict setValue:extension forKey:@"attachmentExtension"];
+            [agentAttachmentDict setValue:item.attachment.url forKey:@"absolutePath"];
+            [agentAttachmentDict setValue:item.attachment.url forKey:@"path"];
+        }
     }
     return agentAttachmentDict;
 }
 
 + (NSMutableDictionary *) getVisitorAttachmentDict: (ZDCChatEvent*) item {
     NSMutableDictionary * visitorAttachmentDict = [self getDefaultDict:item];
-    [visitorAttachmentDict setValue:@"VISITOR_ATTACHMENT" forKey:@"type"];
-    if (item.attachment != nil) {
-        [visitorAttachmentDict setValue:item.attachment.fileName forKey:@"attachmentName"];
-        [visitorAttachmentDict setValue:item.attachment.fileSize forKey:@"attachmentSize"];
-        [visitorAttachmentDict setValue:item.fileUpload.fileExtension forKey:@"attachmentExtension"];
-        [visitorAttachmentDict setValue:[NSNumber numberWithFloat:item.fileUpload.progress] forKey:@"uploadProgress"];
-        [visitorAttachmentDict setValue:item.fileUpload.uploadURL forKey:@"uploadUrl"];
-        [visitorAttachmentDict setValue:item.attachment.url forKey:@"absolutePath"];
-        [visitorAttachmentDict setValue:item.attachment.url forKey:@"path"];
+    if (visitorAttachmentDict != nil) {
+        [visitorAttachmentDict setValue:@"VISITOR_ATTACHMENT" forKey:@"type"];
+        if (item.attachment != nil) {
+            [visitorAttachmentDict setValue:item.attachment.fileName forKey:@"attachmentName"];
+            [visitorAttachmentDict setValue:item.attachment.fileSize forKey:@"attachmentSize"];
+            [visitorAttachmentDict setValue:item.attachment.url forKey:@"absolutePath"];
+            [visitorAttachmentDict setValue:item.attachment.url forKey:@"path"];
+        }
+        if (item.fileUpload != nil) {
+            [visitorAttachmentDict setValue:item.fileUpload.uploadURL forKey:@"uploadUrl"];
+            [visitorAttachmentDict setValue:item.fileUpload.path forKey:@"path"];
+            [visitorAttachmentDict setValue:item.fileUpload.path forKey:@"absolutePath"];
+            [visitorAttachmentDict setValue:item.fileUpload.fileExtension forKey:@"attachmentExtension"];
+            [visitorAttachmentDict setValue:item.fileUpload.fileSize forKey:@"attachmentSize"];
+            [visitorAttachmentDict setValue:item.fileUpload.fileName forKey:@"attachmentName"];
+            [visitorAttachmentDict setValue:[NSNumber numberWithFloat:item.fileUpload.progress] forKey:@"uploadProgress"];
+        }
     }
     return visitorAttachmentDict;
 }

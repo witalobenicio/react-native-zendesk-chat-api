@@ -62,9 +62,9 @@ const deleteChatLogObserver = () => {
   ZendeskChat.deleteChatLogObserver();
 };
 
-const addChatConnectionObserver = (callback: (string) => void) => {
+const addChatConnectionObserver = (callback: ({ status: string}) => void) => {
   ZendeskChat.addChatConnectionObserver();
-  connectionSubscription = ZendeskChatEmitter.addListener(emitters.CONNECTION, (connection: string) => {
+  connectionSubscription = ZendeskChatEmitter.addListener(emitters.CONNECTION, (connection: { status: string }) => {
     callback(connection);
   })
 };

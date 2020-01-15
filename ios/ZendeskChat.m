@@ -1,22 +1,17 @@
 #import "ZendeskChat.h"
 #import "ItemFactory.m"
 
+NSString *const onConnectionUpdateEmitter = @"onConnectionUpdate";
+NSString *const onChatLogReceivedEmitter = @"onChatLogUpdate";
+NSString *const onTimeoutReceivedEmitter = @"onTimeoutReceived";
+bool hasConnectionListeners;
+bool hasChatLogListeners;
+bool hasTimeoutListeners;
+NSMutableArray* entries;
+
 @implementation ZendeskChat
 
-{
-    bool hasConnectionListeners;
-    bool hasChatLogListeners;
-    bool hasTimeoutListeners;
-    NSString* onConnectionUpdateEmitter;
-    NSString* onChatLogReceivedEmitter;
-    NSString* onTimeoutReceivedEmitter;
-}
-
-
 - (NSArray<NSString *> *)supportedEvents {
-    onConnectionUpdateEmitter = @"onConnectionUpdate";
-    onChatLogReceivedEmitter = @"onChatLogUpdate";
-    onTimeoutReceivedEmitter = @"onTimeoutReceived";
     return @[onConnectionUpdateEmitter, onChatLogReceivedEmitter, onTimeoutReceivedEmitter];
 }
 
@@ -29,9 +24,15 @@ RCT_REMAP_METHOD(startChat,
                  startChatWithResolver:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject) {
     ZDCVisitorInfo* visitorInfo = [[ZDCVisitorInfo alloc] init];
-    visitorInfo.name = userInfo[@"name"];
-    visitorInfo.email = userInfo[@"email"];
-    visitorInfo.phone = userInfo[@"phone"];
+    if ([userInfo objectForKey:@"name"]) {
+        visitorInfo.name = userInfo[@"name"];
+    }
+    if ([userInfo objectForKey:@"email"]) {
+        visitorInfo.email = userInfo[@"email"];
+    }
+    if ([userInfo objectForKey:@"phone"]) {
+        visitorInfo.phone = userInfo[@"phone"];
+    }
     dispatch_sync(dispatch_get_main_queue(), ^{
         [[ZDCChatAPI instance] setVisitorInfo:visitorInfo];
         if (userConfig != nil) {
@@ -63,12 +64,14 @@ RCT_REMAP_METHOD(getChatLog,
                  )
 {
     dispatch_sync(dispatch_get_main_queue(), ^{
-        if (entries.count == 0) {
+        if (entries != nil && entries.count == 0) {
             entries = [[NSMutableArray alloc] init];
         }
         NSArray* events = [[ZDCChatAPI instance] livechatLog];
-        entries = [ItemFactory getArrayFromEntries:events];
-        resolve(entries);
+        if (events != nil) {
+            entries = [ItemFactory getArrayFromEntries:events];
+            resolve(entries);
+        }
     });
 }
 
@@ -78,7 +81,7 @@ RCT_EXPORT_METHOD(addChatLogObserver)
         [[ZDCChatAPI instance] addObserver:self forChatLogEvents:@selector(chatEvent:)];
     });
     hasChatLogListeners = YES;
-    if (entries.count == 0) {
+    if (entries != nil && entries.count == 0) {
         entries = [[NSMutableArray alloc] init];
     }
 }
@@ -94,28 +97,23 @@ RCT_EXPORT_METHOD(deleteChatLogObserver)
 -(void)chatEvent:(NSNotification *) notification
 {
     NSArray *events = [[ZDCChatAPI instance] livechatLog];
-    ZDCChatEvent *event = [events lastObject];
-    long sizeDiff = events.count - entries.count;
-    if (entries.count == 0) {
+    if (events != nil) {
+        entries = [[NSMutableArray alloc] init];
         for (int i = 0; i < events.count; i++) {
             NSMutableDictionary *item = [ItemFactory getDictionaryFromEntry:events[i]];
-            [entries addObject:item];
+            if (item != nil) {
+                [entries addObject:item];
+            }
         }
+        [self sendEventWithName:onChatLogReceivedEmitter body:entries];
     }
-    if (sizeDiff > 0) {
-        NSMutableDictionary *item = [ItemFactory getDictionaryFromEntry:event];
-        [entries addObject:item];
-    }
-    //TODO: Emit Chat EVENT
-    [self sendEventWithName:onChatLogReceivedEmitter body:entries];
-//    logCallback(@[entries]);
 }
 
 RCT_EXPORT_METHOD(addChatConnectionObserver)
 {
     hasConnectionListeners = YES;
-    NSLog(@"addChatConnection Mensagem");
     dispatch_sync(dispatch_get_main_queue(), ^{
+        [self connectionEvent:nil];
         [[ZDCChatAPI instance] addObserver:self forConnectionEvents:@selector(connectionEvent:)];
     });
 }
@@ -131,32 +129,34 @@ RCT_EXPORT_METHOD(deleteChatConnectionObserver)
 -(void)connectionEvent:(NSNotification *) notification
 {
     ZDCConnectionStatus status = [[ZDCChatAPI instance] connectionStatus];
-    NSString* statusText = @"";
-    switch (status) {
-        case ZDCConnectionStatusConnecting:
-            statusText = @"CONNECTING";
-            break;
-        case ZDCConnectionStatusClosed:
-            statusText = @"CLOSED";
-            break;
-        case ZDCConnectionStatusConnected:
-            statusText = @"CONNECTED";
-            break;
-        case ZDCConnectionStatusDisconnected:
-            statusText = @"DISCONNECTED";
-            break;
-        case ZDCConnectionStatusNoConnection:
-            statusText = @"NO_CONNECTION";
-            break;
-        case ZDCConnectionStatusUninitialized:
-            statusText = @"UNITIALIZED";
-            break;
-        default:
-            statusText = @"UNKNOWN";
-            break;
+    if (status) {
+        NSString* statusText = @"";
+        switch (status) {
+            case ZDCConnectionStatusConnecting:
+                statusText = @"CONNECTING";
+                break;
+            case ZDCConnectionStatusClosed:
+                statusText = @"CLOSED";
+                break;
+            case ZDCConnectionStatusConnected:
+                statusText = @"CONNECTED";
+                break;
+            case ZDCConnectionStatusDisconnected:
+                statusText = @"DISCONNECTED";
+                break;
+            case ZDCConnectionStatusNoConnection:
+                statusText = @"NO_CONNECTION";
+                break;
+            case ZDCConnectionStatusUninitialized:
+                statusText = @"UNITIALIZED";
+                break;
+            default:
+                statusText = @"UNKNOWN";
+                break;
+        }
+        NSLog(@"STATUS CONNECTION: %@, And Emitter is: %@", statusText, onConnectionUpdateEmitter);
+        [self sendEventWithName:onConnectionUpdateEmitter body:@{@"status": statusText}];
     }
-    NSLog(@"STATUS CONNECTION: %@", statusText);
-    [self sendEventWithName:onConnectionUpdateEmitter body:@{@"status": statusText}];
 }
 
 RCT_EXPORT_METHOD(addChatTimeoutObserver)

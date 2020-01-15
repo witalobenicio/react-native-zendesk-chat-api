@@ -93,6 +93,7 @@ public class ZendeskChatModule extends ReactContextBaseJavaModule {
     public void addChatConnectionObserver() {
         chatConnectionObserver = new ChatConnectionObserver(reactContext);
         ZopimChatApi.getDataSource().addConnectionObserver(chatConnectionObserver);
+        chatConnectionObserver.update(ZopimChatApi.getDataSource().getConnection());
     }
 
     @ReactMethod
