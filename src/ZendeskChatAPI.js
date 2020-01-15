@@ -1,6 +1,6 @@
 // @flow
 
-import { NativeModules, NativeEventEmitter } from 'react-native';
+import { NativeModules, NativeEventEmitter, Platform } from 'react-native';
 import { emitters, chatLogTypes, connectionTypes } from './consts';
 
 const { ZendeskChat } = NativeModules;
@@ -19,6 +19,14 @@ type UserInfo = {
 type UserConfig = {
   department: string,
   tags: Array<string>,
+};
+
+const isChatEnabled = (callback: (boolean) => void) => {
+  if (Platform.OS === 'android') {
+    ZendeskChat.isChatEnabled(callback);
+  } else {
+    callback(true);
+  }
 };
 
 const startChat = async (accountKey: string, userInfo: UserInfo, userConfig: UserConfig) => {
@@ -98,6 +106,7 @@ const sendFile = (path: string) => {
 };
 
 export default {
+  isChatEnabled,
   startChat,
   endChat,
   getChatLog,

@@ -1,10 +1,12 @@
 package br.com.meutudo.rnzendeskchat;
 
 import android.content.IntentFilter;
+import android.os.Build;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
+import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -61,6 +63,15 @@ public class ZendeskChatModule extends ReactContextBaseJavaModule {
         }
         this.chatApi = config.build(currentActivity);
         promise.resolve(true);
+    }
+
+    @ReactMethod
+    public void isChatAvailable(Callback callback) {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            callback.invoke(true);
+            return;
+        }
+        callback.invoke(false);
     }
 
     @ReactMethod
