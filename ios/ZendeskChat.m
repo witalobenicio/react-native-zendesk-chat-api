@@ -113,8 +113,22 @@ RCT_EXPORT_METHOD(addChatConnectionObserver)
 {
     hasConnectionListeners = YES;
     dispatch_sync(dispatch_get_main_queue(), ^{
-        [self connectionEvent:nil];
         [[ZDCChatAPI instance] addObserver:self forConnectionEvents:@selector(connectionEvent:)];
+        dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * 0.5);
+        dispatch_after(delay, dispatch_get_main_queue(), ^(void){
+            [self connectionEvent:[NSNotification notificationWithName:@"name" object:nil]];
+        });
+    });
+}
+
+RCT_EXPORT_METHOD(getChatConnection:(RCTResponseSenderBlock)callback)
+{
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        ZDCConnectionStatus status = [[ZDCChatAPI instance] connectionStatus];
+        NSString *statusText = [self getConnectionName:status];
+        if (statusText != nil) {
+            callback(@[statusText]);
+        }
     });
 }
 
@@ -126,9 +140,7 @@ RCT_EXPORT_METHOD(deleteChatConnectionObserver)
     });
 }
 
--(void)connectionEvent:(NSNotification *) notification
-{
-    ZDCConnectionStatus status = [[ZDCChatAPI instance] connectionStatus];
+-(NSString *)getConnectionName:(ZDCConnectionStatus) status {
     if (status) {
         NSString* statusText = @"";
         switch (status) {
@@ -154,10 +166,22 @@ RCT_EXPORT_METHOD(deleteChatConnectionObserver)
                 statusText = @"UNKNOWN";
                 break;
         }
-        NSLog(@"STATUS CONNECTION: %@, And Emitter is: %@", statusText, onConnectionUpdateEmitter);
+        return statusText;
+    }
+    return nil;
+}
+
+-(void)connectionEvent:(NSNotification *) notification
+{
+    ZDCConnectionStatus status = [[ZDCChatAPI instance] connectionStatus];
+    NSString *statusText = [self getConnectionName:status];
+    NSLog(@"Notification: %@", notification.name);
+    NSLog(@"Notification with status: %@ %@", statusText, onConnectionUpdateEmitter);
+    if (statusText != nil) {
         [self sendEventWithName:onConnectionUpdateEmitter body:@{@"status": statusText}];
     }
 }
+
 
 RCT_EXPORT_METHOD(addChatTimeoutObserver)
 {
