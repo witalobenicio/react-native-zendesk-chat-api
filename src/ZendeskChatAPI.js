@@ -21,9 +21,9 @@ type UserConfig = {
   tags: Array<string>,
 };
 
-const isChatEnabled = (callback: (boolean) => void) => {
+const isChatAvailable = (callback: (boolean) => void) => {
   if (Platform.OS === 'android') {
-    ZendeskChat.isChatEnabled(callback);
+    ZendeskChat.isChatAvailable(callback);
   } else {
     callback(true);
   }
