@@ -106,7 +106,7 @@ const sendFile = (path: string) => {
 };
 
 export default {
-  isChatEnabled,
+  isChatAvailable,
   startChat,
   endChat,
   getChatLog,
