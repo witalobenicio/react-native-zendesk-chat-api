@@ -7,6 +7,7 @@ const { ZendeskChat } = NativeModules;
 
 const ZendeskChatEmitter = new NativeEventEmitter(ZendeskChat);
 let chatLogSubscription;
+let departmentsSubscription;
 let connectionSubscription;
 let timeoutSubscription;
 
@@ -27,6 +28,10 @@ const isChatAvailable = (callback: (boolean) => void) => {
   } else {
     callback(true);
   }
+};
+
+const isOnline = (callback: (boolean) => void) => {
+  ZendeskChat.isOnline(callback);
 };
 
 const startChat = async (accountKey: string, userInfo: UserInfo, userConfig: UserConfig) => {
@@ -70,6 +75,23 @@ const deleteChatLogObserver = () => {
   ZendeskChat.deleteChatLogObserver();
 };
 
+const addDepartmentsObserver = (callback: ({ isOnline: boolean }) => void) => {
+  ZendeskChat.addDepartmentsObserver();
+  departmentsSubscription = ZendeskChatEmitter
+    .addListener(
+      emitters.DEPARTMENTS,
+      (response: { status: string, departments: Array<string> }) => {
+        callback(response);
+      })
+};
+
+const deleteDepartmentsObserver = () => {
+  if (departmentsSubscription) {
+    departmentsSubscription.remove();
+  }
+  ZendeskChat.deleteDepartmentsObserver();
+};
+
 const addChatConnectionObserver = (callback: ({ status: string}) => void) => {
   ZendeskChat.addChatConnectionObserver();
   connectionSubscription = ZendeskChatEmitter.addListener(emitters.CONNECTION, (connection: { status: string }) => {
@@ -107,11 +129,14 @@ const sendFile = (path: string) => {
 
 export default {
   isChatAvailable,
+  isOnline,
   startChat,
   endChat,
   getChatLog,
   addChatLogObserver,
   deleteChatLogObserver,
+  addDepartmentsObserver,
+  deleteDepartmentsObserver,
   addChatConnectionObserver,
   deleteChatConnectionObserver,
   addChatTimeoutObserver,

@@ -4,6 +4,8 @@
 NSString *const onConnectionUpdateEmitter = @"onConnectionUpdate";
 NSString *const onChatLogReceivedEmitter = @"onChatLogUpdate";
 NSString *const onTimeoutReceivedEmitter = @"onTimeoutReceived";
+NSString *const onDepartmentsReceivedEmitter = @"onDepartmentsUpdate";
+
 bool hasConnectionListeners;
 bool hasChatLogListeners;
 bool hasTimeoutListeners;
@@ -12,7 +14,7 @@ NSMutableArray* entries;
 @implementation ZendeskChat
 
 - (NSArray<NSString *> *)supportedEvents {
-    return @[onConnectionUpdateEmitter, onChatLogReceivedEmitter, onTimeoutReceivedEmitter];
+    return @[onConnectionUpdateEmitter, onChatLogReceivedEmitter, onTimeoutReceivedEmitter, onDepartmentsReceivedEmitter];
 }
 
 RCT_EXPORT_MODULE()
@@ -109,6 +111,38 @@ RCT_EXPORT_METHOD(deleteChatLogObserver)
     }
 }
 
+RCT_EXPORT_METHOD(addDepartmentsObserver)
+{
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [[ZDCChatAPI instance] addObserver:self forDepartmentEvents:@selector(departmentEvent:)];
+    });
+    hasChatLogListeners = YES;
+    if (entries != nil && entries.count == 0) {
+        entries = [[NSMutableArray alloc] init];
+    }
+}
+
+RCT_EXPORT_METHOD(deleteDepartmentsObserver)
+{
+    hasChatLogListeners = NO;
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [[ZDCChatAPI instance] removeObserverForChatLogEvents:self];
+    });
+}
+
+-(void)departmentEvent:(NSNotification *) notification
+{
+    NSArray *departments = [[ZDCChatAPI instance] departments];
+    NSString * statusOnline = @"OFFLINE";
+    BOOL online = [[ZDCChatAPI instance] isAccountOnline];
+    if (online) {
+        statusOnline = @"ONLINE";
+    }
+    if (departments != nil && departments.count > 0) {
+        [self sendEventWithName:onDepartmentsReceivedEmitter body:@{@"status": statusOnline, @"departments": departments }];
+    }
+}
+
 RCT_EXPORT_METHOD(addChatConnectionObserver)
 {
     hasConnectionListeners = YES;
@@ -128,6 +162,18 @@ RCT_EXPORT_METHOD(getChatConnection:(RCTResponseSenderBlock)callback)
         NSString *statusText = [self getConnectionName:status];
         if (statusText != nil) {
             callback(@[statusText]);
+        }
+    });
+}
+
+RCT_EXPORT_METHOD(isOnline:(RCTResponseSenderBlock)callback)
+{
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        BOOL isOnline = [[ZDCChatAPI instance] isAccountOnline];
+        if (isOnline) {
+            callback(@[@"ONLINE"]);
+        } else {
+            callback(@[@"OFFLINE"]);
         }
     });
 }

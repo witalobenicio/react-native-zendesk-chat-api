@@ -16,20 +16,27 @@ import com.facebook.react.bridge.ReadableMap;
 import com.zopim.android.sdk.api.ChatApi;
 import com.zopim.android.sdk.api.ChatSession;
 import com.zopim.android.sdk.api.ZopimChatApi;
+import com.zopim.android.sdk.model.Agent;
 import com.zopim.android.sdk.model.ChatLog;
+import com.zopim.android.sdk.model.Department;
 import com.zopim.android.sdk.model.VisitorInfo;
 
 import java.io.File;
 import java.util.LinkedHashMap;
+import java.util.Map;
+
+import static com.zopim.android.sdk.model.Department.Status.ONLINE;
 
 public class ZendeskChatModule extends ReactContextBaseJavaModule {
 
     private final ReactApplicationContext reactContext;
     private ChatObserver chatObserver;
+    private ChatDepartmentsObserver departmentsObserver;
     private ChatTimeoutObserver chatTimeoutObserver;
     private ChatConnectionObserver chatConnectionObserver;
     private ChatApi chatApi = null;
     public final static String onConnectionUpdateEmitter = "onConnectionUpdate";
+    public final static String onDepartmentsUpdateEmitter = "onDepartmentsUpdate";
     public final static String onChatLogUpdateEmitter = "onChatLogUpdate";
     public final static String onTimeoutReceivedEmitter = "onTimeoutReceived";
 
@@ -75,6 +82,19 @@ public class ZendeskChatModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void isOnline(Callback callback) {
+        Map<String, Department> departments = ZopimChatApi.getDataSource().getDepartments();
+        for (Map.Entry<String, Department> department : departments.entrySet()) {
+            Department departmentValue = department.getValue();
+            if (departmentValue.getStatus() == ONLINE) {
+                callback.invoke("ONLINE");
+                return;
+            }
+        }
+        callback.invoke("OFFLINE");
+    }
+
+    @ReactMethod
     public void endChat() {
         if (this.chatApi != null) {
             this.chatApi.endChat();
@@ -97,6 +117,19 @@ public class ZendeskChatModule extends ReactContextBaseJavaModule {
     public void deleteChatLogObserver() {
         if (chatObserver != null) {
             ZopimChatApi.getDataSource().deleteChatLogObserver(chatObserver);
+        }
+    }
+
+    @ReactMethod
+    public void addDepartmentsObserver() {
+        departmentsObserver = new ChatDepartmentsObserver(this.reactContext);
+        ZopimChatApi.getDataSource().addDepartmentsObserver(departmentsObserver);
+    }
+
+    @ReactMethod
+    public void deleteDepartmentsObserver() {
+        if (departmentsObserver != null) {
+            ZopimChatApi.getDataSource().deleteDepartmentsObserver(departmentsObserver);
         }
     }
 
