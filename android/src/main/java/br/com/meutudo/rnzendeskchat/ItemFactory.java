@@ -136,19 +136,29 @@ public class ItemFactory {
         WritableMap visitorMessage = getDefaultMap(id, item);
         visitorMessage.putString("participantId", id);
         visitorMessage.putString("message", item.getMessage());
+        try {
+            visitorMessage.putBoolean("unverified", item.isUnverified());
+            visitorMessage.putBoolean("failed", item.isFailed());
+        } catch (NullPointerException e) {
+
+        }
         visitorMessage.putString("type", "VISITOR_MESSAGE");
         if (item.getAttachment() != null) {
             try {
-                String path = item.getFile().getPath();
                 visitorMessage.putString("participantId", id);
-                visitorMessage.putString("attachmentName", item.getFile().getName());
-                visitorMessage.putDouble("attachmentSize", item.getFile().length());
-                visitorMessage.putString("attachmentExtension", path.substring(path.lastIndexOf(".")));
-                visitorMessage.putString("absolutePath", item.getFile().getAbsolutePath());
-                visitorMessage.putString("uploadUrl", item.getUploadUrl().toString());
+                if (item.getFile() != null) {
+                    String path = item.getFile().getPath();
+                    visitorMessage.putString("attachmentName", item.getFile().getName());
+                    visitorMessage.putDouble("attachmentSize", item.getFile().length());
+                    visitorMessage.putString("attachmentExtension", path.substring(path.lastIndexOf(".")));
+                    visitorMessage.putString("absolutePath", item.getFile().getAbsolutePath());
+                    visitorMessage.putString("path", path);
+                    visitorMessage.putString("type", "VISITOR_ATTACHMENT");
+                }
+                if (item.getUploadUrl() != null) {
+                    visitorMessage.putString("uploadUrl", item.getUploadUrl().toString());
+                }
                 visitorMessage.putString("error", item.getError().getValue());
-                visitorMessage.putString("path", path);
-                visitorMessage.putString("type", "VISITOR_ATTACHMENT");
             } catch (NullPointerException e) {
                 e.printStackTrace();
                 Log.d("ERROR CHAT", Log.getStackTraceString(e));
