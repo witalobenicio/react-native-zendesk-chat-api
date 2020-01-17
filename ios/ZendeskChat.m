@@ -116,15 +116,10 @@ RCT_EXPORT_METHOD(addDepartmentsObserver)
     dispatch_sync(dispatch_get_main_queue(), ^{
         [[ZDCChatAPI instance] addObserver:self forDepartmentEvents:@selector(departmentEvent:)];
     });
-    hasChatLogListeners = YES;
-    if (entries != nil && entries.count == 0) {
-        entries = [[NSMutableArray alloc] init];
-    }
 }
 
 RCT_EXPORT_METHOD(deleteDepartmentsObserver)
 {
-    hasChatLogListeners = NO;
     dispatch_sync(dispatch_get_main_queue(), ^{
         [[ZDCChatAPI instance] removeObserverForChatLogEvents:self];
     });
@@ -252,7 +247,7 @@ RCT_EXPORT_METHOD(deleteChatTimeoutObserver)
 
 RCT_EXPORT_METHOD(sendMessage:(NSString*)message)
 {
-    
+
         NSLog(@"Mensagem: %@", message);
         [[ZDCChatAPI instance] sendChatMessage:message];
 }
@@ -262,20 +257,22 @@ RCT_EXPORT_METHOD(sendFile:(NSString*)path)
     NSFileManager *fm = [NSFileManager defaultManager];
     NSLog(@"File exists: %d", [fm fileExistsAtPath:path]);
     if ([fm fileExistsAtPath:path]) {
-//        dispatch_sync(dispatch_get_main_queue(), ^{
+        dispatch_sync(dispatch_get_main_queue(), ^{
             NSString *fileName = [[path lastPathComponent] stringByDeletingPathExtension];
+            NSString *fileExtension = [path pathExtension];
             if ([path containsString:@"jpg"] ||
                 [path containsString:@"png"] ||
                 [path containsString:@"jpeg"] ||
                 [path containsString:@"gif"]
                 ) {
                 UIImage *image = [UIImage imageWithContentsOfFile:path];
-                [[ZDCChatAPI instance] uploadImage:image name:fileName];
+                [self addUploadEventObserver];
+                [[ZDCChatAPI instance] uploadImage:image name:[NSString stringWithFormat:@"%@.%@", fileName, fileExtension]];
             } else {
                 NSData *data = [[NSFileManager defaultManager] contentsAtPath:path];
                 [[ZDCChatAPI instance] uploadFileWithData:data name:fileName];
             }
-//        });
+        });
     }
 }
 

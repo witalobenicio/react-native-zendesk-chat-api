@@ -98,19 +98,23 @@
     if (visitorAttachmentDict != nil) {
         [visitorAttachmentDict setValue:@"VISITOR_ATTACHMENT" forKey:@"type"];
         if (item.attachment != nil) {
+            NSString *extension = [item.attachment.url pathExtension];
             [visitorAttachmentDict setValue:item.attachment.fileName forKey:@"attachmentName"];
             [visitorAttachmentDict setValue:item.attachment.fileSize forKey:@"attachmentSize"];
+            [visitorAttachmentDict setValue:extension forKey:@"attachmentExtension"];
             [visitorAttachmentDict setValue:item.attachment.url forKey:@"absolutePath"];
             [visitorAttachmentDict setValue:item.attachment.url forKey:@"path"];
         }
         if (item.fileUpload != nil) {
             [visitorAttachmentDict setValue:item.fileUpload.uploadURL forKey:@"uploadUrl"];
-            [visitorAttachmentDict setValue:item.fileUpload.path forKey:@"path"];
-            [visitorAttachmentDict setValue:item.fileUpload.path forKey:@"absolutePath"];
             [visitorAttachmentDict setValue:item.fileUpload.fileExtension forKey:@"attachmentExtension"];
             [visitorAttachmentDict setValue:item.fileUpload.fileSize forKey:@"attachmentSize"];
             [visitorAttachmentDict setValue:item.fileUpload.fileName forKey:@"attachmentName"];
             [visitorAttachmentDict setValue:[NSNumber numberWithFloat:item.fileUpload.progress] forKey:@"uploadProgress"];
+            if (item.attachment) {
+                [visitorAttachmentDict setValue:item.attachment.url forKey:@"absolutePath"];
+                [visitorAttachmentDict setValue:item.attachment.url forKey:@"path"];
+            }
         }
     }
     return visitorAttachmentDict;
