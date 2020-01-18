@@ -266,7 +266,6 @@ RCT_EXPORT_METHOD(sendFile:(NSString*)path)
                 [path containsString:@"gif"]
                 ) {
                 UIImage *image = [UIImage imageWithContentsOfFile:path];
-                [self addUploadEventObserver];
                 [[ZDCChatAPI instance] uploadImage:image name:[NSString stringWithFormat:@"%@.%@", fileName, fileExtension]];
             } else {
                 NSData *data = [[NSFileManager defaultManager] contentsAtPath:path];
