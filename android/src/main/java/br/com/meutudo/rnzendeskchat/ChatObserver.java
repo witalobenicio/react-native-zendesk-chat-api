@@ -62,7 +62,9 @@ public class ChatObserver extends ChatLogObserver {
             ChatLog rowItem = (ChatLog) rowItemsArr[i];
             String id = (String) keys[i];
             WritableMap itemMap = ItemFactory.getReadableMapFromRowItem(id, rowItem);
-            items.pushMap(itemMap);
+            if (itemMap != null) {
+                items.pushMap(itemMap);
+            }
         }
         this.context
                 .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)

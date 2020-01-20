@@ -1,10 +1,12 @@
 package br.com.meutudo.rnzendeskchat;
 
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.Promise;
@@ -16,7 +18,6 @@ import com.facebook.react.bridge.ReadableMap;
 import com.zopim.android.sdk.api.ChatApi;
 import com.zopim.android.sdk.api.ChatSession;
 import com.zopim.android.sdk.api.ZopimChatApi;
-import com.zopim.android.sdk.model.Agent;
 import com.zopim.android.sdk.model.ChatLog;
 import com.zopim.android.sdk.model.Department;
 import com.zopim.android.sdk.model.VisitorInfo;
@@ -173,9 +174,18 @@ public class ZendeskChatModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void sendFile(String path) {
         if (this.chatApi != null && !TextUtils.isEmpty(path)) {
+            Uri uri = null;
+            if (path.contains("content")) {
+                uri = Uri.parse(path);
+            }
             File file = new File(path);
+            if (uri != null) {
+                file = new File(uri.getPath());
+            }
             if (file.exists()) {
                 chatApi.send(new File(path));
+            } else {
+                Log.d("FILE", "FILE DOESNT EXISTS");
             }
         }
     }
