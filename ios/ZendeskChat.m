@@ -260,16 +260,17 @@ RCT_EXPORT_METHOD(sendFile:(NSString*)path)
         dispatch_sync(dispatch_get_main_queue(), ^{
             NSString *fileName = [[path lastPathComponent] stringByDeletingPathExtension];
             NSString *fileExtension = [path pathExtension];
+            NSString * name = [NSString stringWithFormat:@"%@.%@", fileName, fileExtension];
             if ([path containsString:@"jpg"] ||
                 [path containsString:@"png"] ||
                 [path containsString:@"jpeg"] ||
                 [path containsString:@"gif"]
                 ) {
                 UIImage *image = [UIImage imageWithContentsOfFile:path];
-                [[ZDCChatAPI instance] uploadImage:image name:[NSString stringWithFormat:@"%@.%@", fileName, fileExtension]];
+                [[ZDCChatAPI instance] uploadImage:image name:name];
             } else {
                 NSData *data = [[NSFileManager defaultManager] contentsAtPath:path];
-                [[ZDCChatAPI instance] uploadFileWithData:data name:fileName];
+                [[ZDCChatAPI instance] uploadFileWithData:data name:name];
             }
         });
     }
