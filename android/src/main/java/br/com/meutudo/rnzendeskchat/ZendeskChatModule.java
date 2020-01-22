@@ -40,6 +40,7 @@ public class ZendeskChatModule extends ReactContextBaseJavaModule {
     public final static String onDepartmentsUpdateEmitter = "onDepartmentsUpdate";
     public final static String onChatLogUpdateEmitter = "onChatLogUpdate";
     public final static String onTimeoutReceivedEmitter = "onTimeoutReceived";
+    public final static String onAgentLeaveEmitter = "onAgentLeave";
 
     public ZendeskChatModule(ReactApplicationContext reactContext) {
         super(reactContext);

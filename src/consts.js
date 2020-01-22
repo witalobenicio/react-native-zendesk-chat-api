@@ -3,6 +3,7 @@ export const emitters = {
   CHAT_LOG: 'onChatLogUpdate',
   TIMEOUT: 'onTimeoutReceived',
   DEPARTMENTS: 'onDepartmentsUpdate',
+  AGENT_LEAVE: 'onAgentLeave',
 };
 
 export const connectionTypes = {

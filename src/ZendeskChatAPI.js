@@ -10,6 +10,7 @@ let chatLogSubscription;
 let departmentsSubscription;
 let connectionSubscription;
 let timeoutSubscription;
+let agentLeaveSubscription;
 
 type UserInfo = {
   name: string,
@@ -59,6 +60,18 @@ type ChatLog = {
   error?: string,
   absolutePath?: string,
   path?: string,
+};
+
+const addAgentLeaveObserver = (callback: (Array<ChatLog>) => void) => {
+  agentLeaveSubscription = ZendeskChatEmitter.addListener(emitters.AGENT_LEAVE, (leave: string) => {
+    callback(leave);
+  })
+};
+
+const deleteAgentLeaveObserver = (callback: (Array<ChatLog>) => void) => {
+  if (agentLeaveSubscription) {
+    agentLeaveSubscription.remove();
+  }
 };
 
 const addChatLogObserver = (callback: (Array<ChatLog>) => void) => {
@@ -133,6 +146,8 @@ export default {
   startChat,
   endChat,
   getChatLog,
+  addAgentLeaveObserver,
+  deleteAgentLeaveObserver,
   addChatLogObserver,
   deleteChatLogObserver,
   addDepartmentsObserver,
