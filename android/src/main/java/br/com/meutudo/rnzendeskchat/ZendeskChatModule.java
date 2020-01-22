@@ -1,8 +1,14 @@
 package br.com.meutudo.rnzendeskchat;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.Context;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -11,6 +17,7 @@ import android.util.Log;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
@@ -23,6 +30,7 @@ import com.zopim.android.sdk.model.Department;
 import com.zopim.android.sdk.model.VisitorInfo;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -181,10 +189,14 @@ public class ZendeskChatModule extends ReactContextBaseJavaModule {
             }
             File file = new File(path);
             if (uri != null) {
-                file = new File(uri.getPath());
+                Cursor cursor = this.reactContext.getContentResolver().query(uri, null, null, null, null);
+                if (cursor != null && cursor.moveToFirst()) {
+                    String pathCursor = cursor.getString(8);
+                    file = new File(pathCursor);
+                }
             }
             if (file.exists()) {
-                chatApi.send(new File(path));
+                chatApi.send(file);
             } else {
                 Log.d("FILE", "FILE DOESNT EXISTS");
             }

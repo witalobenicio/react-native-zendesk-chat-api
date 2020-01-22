@@ -5,7 +5,7 @@ NSString *const onConnectionUpdateEmitter = @"onConnectionUpdate";
 NSString *const onChatLogReceivedEmitter = @"onChatLogUpdate";
 NSString *const onTimeoutReceivedEmitter = @"onTimeoutReceived";
 NSString *const onDepartmentsReceivedEmitter = @"onDepartmentsUpdate";
-NSString *const onAgenteLeaveReceiver = @"onAgentLeave";
+NSString *const onAgentLeaveReceiver = @"onAgentLeave";
 
 bool hasConnectionListeners;
 bool hasChatLogListeners;
@@ -15,7 +15,7 @@ NSMutableArray* entries;
 @implementation ZendeskChat
 
 - (NSArray<NSString *> *)supportedEvents {
-    return @[onConnectionUpdateEmitter, onChatLogReceivedEmitter, onTimeoutReceivedEmitter, onDepartmentsReceivedEmitter];
+    return @[onConnectionUpdateEmitter, onChatLogReceivedEmitter, onTimeoutReceivedEmitter, onDepartmentsReceivedEmitter, onAgentLeaveReceiver];
 }
 
 RCT_EXPORT_MODULE()
@@ -103,9 +103,9 @@ RCT_EXPORT_METHOD(deleteChatLogObserver)
     if (events != nil) {
         entries = [[NSMutableArray alloc] init];
         for (int i = 0; i < events.count; i++) {
-            ZDCChatEvent *event = entries[i];
+            ZDCChatEvent *event = events[i];
             if (event.type == ZDCChatEventTypeMemberLeave) {
-                [self sendEventWithName:onAgenteLeaveReceiver body:@"AGENT_LEAVE"];
+                [self sendEventWithName:onAgentLeaveReceiver body:@"AGENT_LEAVE"];
             }
             NSMutableDictionary *item = [ItemFactory getDictionaryFromEntry:events[i]];
             if (item != nil) {
