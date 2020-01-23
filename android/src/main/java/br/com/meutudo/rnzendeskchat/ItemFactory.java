@@ -89,6 +89,12 @@ public class ItemFactory {
         defaultMap.putString("id", id);
         defaultMap.putDouble("timestamp", item.getTimestamp());
         defaultMap.putString("name", item.getDisplayName());
+        if (item.isFailed() != null) {
+            defaultMap.putBoolean("failed", item.isFailed());
+        }
+        if (item.isUnverified() != null) {
+            defaultMap.putBoolean("verified", !item.isUnverified());
+        }
         return defaultMap;
     }
 

@@ -51,6 +51,11 @@
         if (item.displayName) {
             [defaultDict setValue:item.displayName forKey:@"name"];
         }
+        if (item.verified) {
+            [defaultDict setValue:@YES forKey:@"verified"];
+        } else {
+            [defaultDict setValue:@NO forKey:@"verified"];
+        }
         return defaultDict;
     }
     return nil;
