@@ -1,4 +1,4 @@
-package br.com.meutudo.rnzendeskchat;
+package br.com.meutudo.rnzendeskchat.observers;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
@@ -10,6 +10,8 @@ import com.zopim.android.sdk.data.observers.DepartmentsObserver;
 import com.zopim.android.sdk.model.Department;
 
 import java.util.Map;
+
+import br.com.meutudo.rnzendeskchat.ZendeskChatModule;
 
 import static com.zopim.android.sdk.model.Department.Status.ONLINE;
 

@@ -4,6 +4,8 @@ export const emitters = {
   TIMEOUT: 'onTimeoutReceived',
   DEPARTMENTS: 'onDepartmentsUpdate',
   AGENT_LEAVE: 'onAgentLeave',
+  NOTIFICATION: 'onMessageReceived',
+  NOTIFICATION_OPEN: 'onMessageOpened',
 };
 
 export const connectionTypes = {

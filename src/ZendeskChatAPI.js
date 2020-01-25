@@ -11,6 +11,7 @@ let departmentsSubscription;
 let connectionSubscription;
 let timeoutSubscription;
 let agentLeaveSubscription;
+let notificationReceivedSubscription;
 
 type UserInfo = {
   name: string,
@@ -21,6 +22,39 @@ type UserInfo = {
 type UserConfig = {
   department: string,
   tags: Array<string>,
+};
+
+type Notification = {
+  title: string,
+  text: string,
+}
+
+const registerFCMToken = (accountKey) => {
+  if (Platform.OS === 'android') {
+    ZendeskChat.registerFCMToken(accountKey);
+  }
+};
+
+const getNotificationData = (callback: (message: Notification) => void) => {
+  ZendeskChat.getNotificationData(callback);
+};
+
+const showChatNotification = (message: string, title: string) => {
+  ZendeskChat.showChatNotification(message, title);
+};
+
+const onNotificationReceived = (callback: (message: Notification) => void) => {
+  notificationReceivedSubscription = ZendeskChatEmitter
+    .addListener(emitters.NOTIFICATION, (message: Notification) => {
+      callback(message);
+    })
+};
+
+const onNotificationOpened = (callback: (message: Notification) => void) => {
+  notificationReceivedSubscription = ZendeskChatEmitter
+    .addListener(emitters.NOTIFICATION_OPEN, (message: Notification) => {
+      callback(message);
+    })
 };
 
 const isChatAvailable = (callback: (boolean) => void) => {
@@ -141,6 +175,11 @@ const sendFile = (path: string) => {
 };
 
 export default {
+  registerFCMToken,
+  onNotificationReceived,
+  onNotificationOpened,
+  getNotificationData,
+  showChatNotification,
   isChatAvailable,
   isOnline,
   startChat,

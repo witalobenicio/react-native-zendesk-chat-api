@@ -1,4 +1,4 @@
-package br.com.meutudo.rnzendeskchat;
+package br.com.meutudo.rnzendeskchat.observers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,6 +9,8 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.zopim.android.sdk.api.ChatSession;
+
+import br.com.meutudo.rnzendeskchat.ZendeskChatModule;
 
 public class ChatTimeoutObserver extends BroadcastReceiver {
 

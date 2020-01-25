@@ -1,4 +1,4 @@
-package br.com.meutudo.rnzendeskchat;
+package br.com.meutudo.rnzendeskchat.observers;
 
 import android.content.Context;
 
@@ -13,6 +13,8 @@ import com.zopim.android.sdk.data.observers.ChatLogObserver;
 import com.zopim.android.sdk.model.ChatLog;
 import com.zopim.android.sdk.model.Connection;
 import com.zopim.android.sdk.model.items.RowItem;
+
+import br.com.meutudo.rnzendeskchat.ItemFactory;
 import br.com.meutudo.rnzendeskchat.ZendeskChatModule;
 
 import java.util.LinkedHashMap;
