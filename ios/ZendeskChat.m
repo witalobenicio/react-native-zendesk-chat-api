@@ -5,6 +5,8 @@ NSString *const onConnectionUpdateEmitter = @"onConnectionUpdate";
 NSString *const onChatLogReceivedEmitter = @"onChatLogUpdate";
 NSString *const onTimeoutReceivedEmitter = @"onTimeoutReceived";
 NSString *const onDepartmentsReceivedEmitter = @"onDepartmentsUpdate";
+NSString *const onMessageReceivedEmitter = @"onMessageReceived";
+NSString *const onMessageOpenedEmitter = @"onMessageOpened";
 NSString *const onAgentLeaveReceiver = @"onAgentLeave";
 
 bool hasConnectionListeners;
@@ -15,7 +17,7 @@ NSMutableArray* entries;
 @implementation ZendeskChat
 
 - (NSArray<NSString *> *)supportedEvents {
-    return @[onConnectionUpdateEmitter, onChatLogReceivedEmitter, onTimeoutReceivedEmitter, onDepartmentsReceivedEmitter, onAgentLeaveReceiver];
+    return @[onConnectionUpdateEmitter, onChatLogReceivedEmitter, onTimeoutReceivedEmitter, onDepartmentsReceivedEmitter, onAgentLeaveReceiver, onMessageOpenedEmitter, onMessageReceivedEmitter];
 }
 
 RCT_EXPORT_MODULE()
@@ -248,6 +250,16 @@ RCT_EXPORT_METHOD(deleteChatTimeoutObserver)
 -(void)timeoutEvent:(ZDCChatEvent*) notification
 {
     [self sendEventWithName:onTimeoutReceivedEmitter body:@{@"timeout": @true}];
+}
+
++(void)setPushToken:(NSData *) tokenData {
+    [ZDCChat setPushToken:tokenData];
+}
+
++(void)didReceiveRemoteNotification:(NSDictionary *) userInfo {
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [ZDCChat didReceiveRemoteNotification:userInfo];
+    });
 }
 
 RCT_EXPORT_METHOD(sendMessage:(NSString*)message)
