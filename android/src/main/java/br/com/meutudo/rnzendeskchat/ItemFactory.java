@@ -94,6 +94,8 @@ public class ItemFactory {
         }
         if (item.isUnverified() != null) {
             defaultMap.putBoolean("verified", !item.isUnverified());
+        } else {
+            defaultMap.putBoolean("verified", true);
         }
         return defaultMap;
     }

@@ -135,26 +135,26 @@ public class ZendeskChatModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void registerFCMToken(String accountKey) {
         ZopimChatApi.init(accountKey);
-        try {
-            FirebaseInstanceId.getInstance().getInstanceId()
-                    .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                            if (!task.isSuccessful()) {
-                                Log.w("FCM", "getInstanceId failed", task.getException());
-                                return;
-                            }
-
-                            // Get new Instance ID token
-                            final String token = task.getResult().getToken();
-                            // Log and toast
-                            Log.d("FCM", "REGISTERED TOKEN");
-                            ZopimChatApi.setPushToken(token);
-                        }
-                    });
-        } catch (Exception e) {
-
-        }
+//        try {
+//            FirebaseInstanceId.getInstance().getInstanceId()
+//                    .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<InstanceIdResult> task) {
+//                            if (!task.isSuccessful()) {
+//                                Log.w("FCM", "getInstanceId failed", task.getException());
+//                                return;
+//                            }
+//
+//                            // Get new Instance ID token
+//                            final String token = task.getResult().getToken();
+//                            // Log and toast
+//                            Log.d("FCM", "REGISTERED TOKEN");
+//                            ZopimChatApi.setPushToken(token);
+//                        }
+//                    });
+//        } catch (Exception e) {
+//
+//        }
     }
 
     @ReactMethod
@@ -269,6 +269,9 @@ public class ZendeskChatModule extends ReactContextBaseJavaModule {
                     String pathCursor = cursor.getString(8);
                     file = new File(pathCursor);
                 }
+            }
+            if (path.contains("jpg") || path.contains("png")) {
+
             }
             if (file.exists()) {
                 chatApi.send(file);
