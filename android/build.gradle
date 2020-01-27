@@ -81,7 +81,6 @@ dependencies {
 //    implementation 'com.google.firebase:firebase-messaging:17.3.4'
     compileOnly "com.google.firebase:firebase-core:16.0.9"
     compileOnly "com.google.firebase:firebase-messaging:18.0.0"
-    implementation group: 'com.zopim.android', name: 'sdk', version: '1.4.8'
     implementation group: 'com.zopim.android', name: 'sdk-api', version: '1.4.2'
 }
 
