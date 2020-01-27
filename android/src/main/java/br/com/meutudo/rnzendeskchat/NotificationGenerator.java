@@ -71,6 +71,7 @@ public class NotificationGenerator {
                                 .setSummaryText("Chat do suporte"))
                         .setGroup(GROUP_ID)
                         .setGroupSummary(true)
+                        .setAutoCancel(true)
                         .setContentIntent(intent)
                         .build();
 

@@ -6,12 +6,12 @@ import { emitters, chatLogTypes, connectionTypes } from './consts';
 const { ZendeskChat } = NativeModules;
 
 const ZendeskChatEmitter = new NativeEventEmitter(ZendeskChat);
-let chatLogSubscription;
-let departmentsSubscription;
-let connectionSubscription;
-let timeoutSubscription;
-let agentLeaveSubscription;
-let notificationReceivedSubscription;
+let chatLogSubscription = null;
+let departmentsSubscription = null;
+let connectionSubscription = null;
+let timeoutSubscription = null;
+let agentLeaveSubscription = null;
+let notificationReceivedSubscription = null;
 
 type UserInfo = {
   name: string,
@@ -97,72 +97,88 @@ type ChatLog = {
 };
 
 const addAgentLeaveObserver = (callback: (Array<ChatLog>) => void) => {
-  agentLeaveSubscription = ZendeskChatEmitter.addListener(emitters.AGENT_LEAVE, (leave: string) => {
-    callback(leave);
-  })
+  if (agentLeaveSubscription === null) {
+    agentLeaveSubscription = ZendeskChatEmitter.addListener(emitters.AGENT_LEAVE, (leave: string) => {
+      callback(leave);
+    })
+  }
 };
 
 const deleteAgentLeaveObserver = (callback: (Array<ChatLog>) => void) => {
   if (agentLeaveSubscription) {
     agentLeaveSubscription.remove();
+    agentLeaveSubscription = null;
   }
 };
 
 const addChatLogObserver = (callback: (Array<ChatLog>) => void) => {
-  ZendeskChat.addChatLogObserver();
-  chatLogSubscription = ZendeskChatEmitter.addListener(emitters.CHAT_LOG, (items: Array<ChatLog>) => {
-    callback(items);
-  })
+  if (chatLogSubscription === null) {
+    ZendeskChat.addChatLogObserver();
+    chatLogSubscription = ZendeskChatEmitter.addListener(emitters.CHAT_LOG, (items: Array<ChatLog>) => {
+      callback(items);
+    })
+  }
+
 };
 
 const deleteChatLogObserver = () => {
   if (chatLogSubscription) {
     chatLogSubscription.remove();
+    chatLogSubscription = null;
   }
   ZendeskChat.deleteChatLogObserver();
 };
 
 const addDepartmentsObserver = (callback: ({ isOnline: boolean }) => void) => {
-  ZendeskChat.addDepartmentsObserver();
-  departmentsSubscription = ZendeskChatEmitter
-    .addListener(
-      emitters.DEPARTMENTS,
-      (response: { status: string, departments: Array<string> }) => {
-        callback(response);
-      })
+  if (departmentsSubscription === null) {
+    ZendeskChat.addDepartmentsObserver();
+    departmentsSubscription = ZendeskChatEmitter
+      .addListener(
+        emitters.DEPARTMENTS,
+        (response: { status: string, departments: Array<string> }) => {
+          callback(response);
+        })
+  }
 };
 
 const deleteDepartmentsObserver = () => {
   if (departmentsSubscription) {
     departmentsSubscription.remove();
+    departmentsSubscription = null;
   }
   ZendeskChat.deleteDepartmentsObserver();
 };
 
 const addChatConnectionObserver = (callback: ({ status: string}) => void) => {
-  ZendeskChat.addChatConnectionObserver();
-  connectionSubscription = ZendeskChatEmitter.addListener(emitters.CONNECTION, (connection: { status: string }) => {
-    callback(connection);
-  })
+  if (connectionSubscription === null) {
+    ZendeskChat.addChatConnectionObserver();
+    connectionSubscription = ZendeskChatEmitter.addListener(emitters.CONNECTION, (connection: { status: string }) => {
+      callback(connection);
+    })
+  }
 };
 
 const deleteChatConnectionObserver = () => {
   if (connectionSubscription) {
     connectionSubscription.remove();
+    connectionSubscription = null;
   }
   ZendeskChat.deleteChatConnectionObserver();
 };
 
 const addChatTimeoutObserver = (callback: (boolean) => void) => {
-  ZendeskChat.addChatTimeoutObserver();
-  timeoutSubscription = ZendeskChatEmitter.addListener(emitters.TIMEOUT, (timeout: boolean) => {
-    callback(timeout);
-  })
+  if (timeoutSubscription === null) {
+    ZendeskChat.addChatTimeoutObserver();
+    timeoutSubscription = ZendeskChatEmitter.addListener(emitters.TIMEOUT, (timeout: boolean) => {
+      callback(timeout);
+    })
+  }
 };
 
 const deleteChatTimeoutObserver = () => {
   if (timeoutSubscription) {
     timeoutSubscription.remove();
+    timeoutSubscription = null;
   }
 };
 

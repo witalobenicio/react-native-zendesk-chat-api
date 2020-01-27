@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="br.com.meutudo.rnzendeskchat">
-<!--    <application>-->
-<!--        <receiver android:name="br.com.meutudo.rnzendeskchat.receivers.NotificationOpenedReceiver" />-->
-<!--    </application>-->
+    <application>
+        <receiver android:name="br.com.meutudo.rnzendeskchat.receivers.NotificationOpenedReceiver" />
+    </application>
 
 </manifest>

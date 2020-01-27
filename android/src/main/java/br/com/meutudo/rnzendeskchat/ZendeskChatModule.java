@@ -35,8 +35,10 @@ import com.zopim.android.sdk.model.ChatLog;
 import com.zopim.android.sdk.model.Department;
 import com.zopim.android.sdk.model.PushData;
 import com.zopim.android.sdk.model.VisitorInfo;
+import com.zopim.android.sdk.store.Storage;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -135,26 +137,30 @@ public class ZendeskChatModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void registerFCMToken(String accountKey) {
         ZopimChatApi.init(accountKey);
-//        try {
-//            FirebaseInstanceId.getInstance().getInstanceId()
-//                    .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-//                        @Override
-//                        public void onComplete(@NonNull Task<InstanceIdResult> task) {
-//                            if (!task.isSuccessful()) {
-//                                Log.w("FCM", "getInstanceId failed", task.getException());
-//                                return;
-//                            }
-//
-//                            // Get new Instance ID token
-//                            final String token = task.getResult().getToken();
-//                            // Log and toast
-//                            Log.d("FCM", "REGISTERED TOKEN");
-//                            ZopimChatApi.setPushToken(token);
-//                        }
-//                    });
-//        } catch (Exception e) {
-//
-//        }
+        if (accountKey != null) {
+            try {
+                FirebaseInstanceId.getInstance().getInstanceId()
+                        .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                if (!task.isSuccessful()) {
+                                    Log.w("FCM", "getInstanceId failed", task.getException());
+                                    return;
+                                }
+
+                                // Get new Instance ID token
+                                final String token = task.getResult().getToken();
+                                // Log and toast
+                                Log.d("FCM", "REGISTERED TOKEN");
+                                ZopimChatApi.setPushToken(token);
+                            }
+                        });
+            } catch (Exception e) {
+
+            }
+        } else {
+            ZopimChatApi.clearPushToken();
+        }
     }
 
     @ReactMethod
@@ -264,14 +270,23 @@ public class ZendeskChatModule extends ReactContextBaseJavaModule {
             }
             File file = new File(path);
             if (uri != null) {
-                Cursor cursor = this.reactContext.getContentResolver().query(uri, null, null, null, null);
-                if (cursor != null && cursor.moveToFirst()) {
-                    String pathCursor = cursor.getString(8);
-                    file = new File(pathCursor);
+                String realPathFromUri = null;
+                if (path.contains("download")) {
+                    Cursor cursor = this.reactContext.getContentResolver().query(uri, null, null, null, null);
+                    if (cursor != null && cursor.moveToFirst()) {
+                        String pathCursor = cursor.getString(8);
+                        file = new File(pathCursor);
+                    }
+                } else {
+                    try {
+                        realPathFromUri = Utils.getFilePath(reactContext, uri);
+                        if (realPathFromUri != null) {
+                            file = new File(realPathFromUri);
+                        }
+                    } catch (URISyntaxException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-            if (path.contains("jpg") || path.contains("png")) {
-
             }
             if (file.exists()) {
                 chatApi.send(file);
