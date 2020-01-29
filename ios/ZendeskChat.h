@@ -7,7 +7,7 @@
     NSMutableArray *entries;
 }
 
-+(void) setPushToken:(NSData *) pushToken;
++(void) savePushToken:(NSData *) pushToken;
 +(void) didReceiveRemoteNotification:(NSDictionary *) userInfo;
 
 @end
