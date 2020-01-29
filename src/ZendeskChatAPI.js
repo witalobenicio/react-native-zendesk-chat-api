@@ -32,29 +32,39 @@ type Notification = {
 const registerFCMToken = (accountKey) => {
   if (Platform.OS === 'android') {
     ZendeskChat.registerFCMToken(accountKey);
+  } else {
+    ZendeskChat.registerToken();
   }
 };
 
 const getNotificationData = (callback: (message: Notification) => void) => {
-  ZendeskChat.getNotificationData(callback);
+  if (Platform.OS === 'android') {
+    ZendeskChat.getNotificationData(callback);
+  }
 };
 
 const showChatNotification = (message: string, title: string) => {
-  ZendeskChat.showChatNotification(message, title);
+  if (Platform.OS === 'android') {
+    ZendeskChat.showChatNotification(message, title);
+  }
 };
 
 const onNotificationReceived = (callback: (message: Notification) => void) => {
-  notificationReceivedSubscription = ZendeskChatEmitter
-    .addListener(emitters.NOTIFICATION, (message: Notification) => {
-      callback(message);
-    })
+  if (Platform.OS === 'android') {
+    notificationReceivedSubscription = ZendeskChatEmitter
+      .addListener(emitters.NOTIFICATION, (message: Notification) => {
+        callback(message);
+      })
+  }
 };
 
 const onNotificationOpened = (callback: (message: Notification) => void) => {
-  notificationReceivedSubscription = ZendeskChatEmitter
-    .addListener(emitters.NOTIFICATION_OPEN, (message: Notification) => {
-      callback(message);
-    })
+  if (Platform.OS === 'android') {
+    notificationReceivedSubscription = ZendeskChatEmitter
+      .addListener(emitters.NOTIFICATION_OPEN, (message: Notification) => {
+        callback(message);
+      })
+  }
 };
 
 const isChatAvailable = (callback: (boolean) => void) => {

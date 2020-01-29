@@ -13,6 +13,7 @@ bool hasConnectionListeners;
 bool hasChatLogListeners;
 bool hasTimeoutListeners;
 NSMutableArray* entries;
+NSData* pushToken;
 
 @implementation ZendeskChat
 
@@ -252,8 +253,15 @@ RCT_EXPORT_METHOD(deleteChatTimeoutObserver)
     [self sendEventWithName:onTimeoutReceivedEmitter body:@{@"timeout": @true}];
 }
 
-+(void)setPushToken:(NSData *) tokenData {
-    [ZDCChat setPushToken:tokenData];
++(void)savePushToken:(NSData *) tokenData {
+    pushToken = tokenData;
+}
+
+RCT_EXPORT_METHOD(registerToken)
+{
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [ZDCChat setPushToken:pushToken];
+    });
 }
 
 +(void)didReceiveRemoteNotification:(NSDictionary *) userInfo {
