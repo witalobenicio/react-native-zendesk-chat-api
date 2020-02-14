@@ -257,10 +257,14 @@ RCT_EXPORT_METHOD(deleteChatTimeoutObserver)
     pushToken = tokenData;
 }
 
-RCT_EXPORT_METHOD(registerToken)
+RCT_EXPORT_METHOD(registerToken:(NSString*)key)
 {
     dispatch_sync(dispatch_get_main_queue(), ^{
-        [ZDCChat setPushToken:pushToken];
+        if (key == nil) {
+            [ZDCChat clearPushToken];
+        } else {
+            [ZDCChat setPushToken:pushToken];
+        }
     });
 }
 

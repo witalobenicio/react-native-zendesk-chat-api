@@ -33,7 +33,7 @@ const registerFCMToken = (accountKey) => {
   if (Platform.OS === 'android') {
     ZendeskChat.registerFCMToken(accountKey);
   } else {
-    ZendeskChat.registerToken();
+    ZendeskChat.registerToken(accountKey);
   }
 };
 
