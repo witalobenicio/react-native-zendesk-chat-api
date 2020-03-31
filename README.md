@@ -1,6 +1,9 @@
 # rn-zendesk-chat-api
 Wrapper around Zendesk Chat API SDK for mobile Android and iOS
 
+**IMPORTANT! This project don't support auto link feature and Pods yet.
+So you may have not be able to use, or have to do some workaround to use in react native versions above 0.60.**
+
 ## Getting started
 
 `$ npm install rn-zendesk-chat --save`
