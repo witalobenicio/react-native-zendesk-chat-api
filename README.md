@@ -248,7 +248,7 @@ ZendeskChatApi.sendMessage("My message goes here");
 // You need to ensure that you will only send files with supported extensions
 // This is defined on your Zendesk Chat Dashboard
 
-// Files that begin with file:// need to have this first removed
+// Files that begin with file:// need to have this sufix removed
 const realPath = (() => {
       if (path.includes('file://')) {
         return path.replace('file://', '');
