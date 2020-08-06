@@ -1,4 +1,5 @@
 # rn-zendesk-chat-api
+
 Wrapper around Zendesk Chat API SDK for mobile Android and iOS
 
 **IMPORTANT! This project doesn't support auto link feature and Pods yet.
@@ -6,7 +7,17 @@ So you may have not be able to use, or have to do some workaround to use in reac
 
 ## Getting started
 
-`$ npm install rn-zendesk-chat --save`
+npm:
+<br />
+
+`$ npm install rn-zendesk-chat-api --save`
+<br />
+
+yarn:
+<br />
+
+`$ yarn add rn-zendesk-chat-api`
+<br />
 
 ### Mostly automatic installation
 
@@ -25,6 +36,7 @@ then you need to link the package:
 `$ react-native link rn-zendesk-chat-api`
 
 ## Receiving notifications
+
 In order to receive chat notifications you have to follow the Zendesk Chat documentation steps.
 Just do the configuration stuff.
 </br>
@@ -59,33 +71,36 @@ Zendesk uses some observers to know if the app is in foreground or background, a
 </br>So you need to add the following code to handle those problems:
 
 ```javascript
-AppState.addEventListener('change', this.handleAppStateChange);
-    this.appstate = AppState.addListener('appStateDidChange', (status: {}) => {
-      if (status.app_state.match('inactive|background') && !this.props.pickerShowing) {
-        ZendeskChat.registerFCMToken(ZENDESK_APP_KEY);
-      }
-      if (status.app_state.match('active') && this.props.route === 'Chat') {
-        ZendeskChat.registerFCMToken(null);
-      }
-    });
+AppState.addEventListener("change", this.handleAppStateChange);
+this.appstate = AppState.addListener("appStateDidChange", (status: {}) => {
+  if (
+    status.app_state.match("inactive|background") &&
+    !this.props.pickerShowing
+  ) {
+    ZendeskChat.registerFCMToken(ZENDESK_APP_KEY);
+  }
+  if (status.app_state.match("active") && this.props.route === "Chat") {
+    ZendeskChat.registerFCMToken(null);
+  }
+});
 ```
 
 Everytime you enter in your Chat screen do:
 
 ```javascript
-  ZendeskChat.registerFCMToken(null);
+ZendeskChat.registerFCMToken(null);
 ```
 
 And everytime your Chat screens unmounts:
 
 ```javascript
-  ZendeskChat.registerFCMToken(ZENDESK_APP_KEY);
+ZendeskChat.registerFCMToken(ZENDESK_APP_KEY);
 ```
 
-* When you set token value to `null` you are disabling the notifications
-
+- When you set token value to `null` you are disabling the notifications
 
 #### Platform specifics
+
 Follow these steps for specific platforms
 
 #### On Android:
@@ -101,6 +116,7 @@ componentWillMount() {
 ```
 
 #### Show notifications in foreground (Android):
+
 This is only required for Android. </br>
 In order to show notifications when your app is in foreground, you need to listen for the following methods:
 
@@ -122,7 +138,7 @@ ZendeskChat.onNotificationOpened(this.onNotificationOpened);
 
 onNotificationOpened = ({ title, text }) => {
   // Do your stuff
-  };
+};
 ```
 
 #### On iOS:
@@ -132,35 +148,36 @@ So, wait for chat to be ONLINE and then register for iOS:
 
 ```javascript
 ZendeskChat.isOnline((chatStatus) => {
-        if (chatStatus === 'ONLINE') {
-          if (Platform.OS === 'ios') {
-            ZendeskChat.registerFCMToken(ZENDESK_APP_KEY);
-          }
-        }
-      });
+  if (chatStatus === "ONLINE") {
+    if (Platform.OS === "ios") {
+      ZendeskChat.registerFCMToken(ZENDESK_APP_KEY);
+    }
+  }
+});
 ```
 
-
 ## Usage
+
 ### Import:
+
 ```javascript
-import ZendeskChatApi from 'rn-zendesk-chat-api';
+import ZendeskChatApi from "rn-zendesk-chat-api";
 ```
 
 ### Start a chat session:
 
 ```javascript
 const userInfo = {
-  name: 'Witalo Benicio',
-  email: 'contato@witalobenicio.com',
-  phone: '+558899999999',
-  note: 'This visitor is very nice',
+  name: "Witalo Benicio",
+  email: "contato@witalobenicio.com",
+  phone: "+558899999999",
+  note: "This visitor is very nice",
 };
 
 //Currently supporting just department and tag as config values
 const chatConfig = {
-  department: 'My Department',
-  tags: ['Tag1', 'Tag2'],
+  department: "My Department",
+  tags: ["Tag1", "Tag2"],
 };
 
 // This is a promise, but just to know that you called succesfully. In order to start sending messages, you need to wait until status === 'CONNECTED'
@@ -217,25 +234,26 @@ ZendeskChatApi.deleteChatLogObserver();
 ### Start listening to timeout event:
 
 ```javascript
-const onTimeoutReceived = ({ timeout }) => {
-};
+const onTimeoutReceived = ({ timeout }) => {};
 
 ZendeskChatApi.addChatTimeoutObserver(onTimeoutReceived);
 ```
+
 ### Stop listening to timeout event:
 
 ```javascript
 //Remember to do this
 ZendeskChatApi.deleteChatTimeoutObserver();
 ```
+
 ### Get a list of live chat messages:
 
 ```javascript
-ZendeskChatApi.getChatLog()
-  .then(entries => {
-    // Do your stuff
-  });
+ZendeskChatApi.getChatLog().then((entries) => {
+  // Do your stuff
+});
 ```
+
 ### Send a message:
 
 ```javascript
@@ -250,12 +268,12 @@ ZendeskChatApi.sendMessage("My message goes here");
 
 // Files that begin with file:// need to have this sufix removed
 const realPath = (() => {
-      if (path.includes('file://')) {
-        return path.replace('file://', '');
-      }
-      return path;
-    })();
-    ZendeskChatApi.sendFile(realPath);
+  if (path.includes("file://")) {
+    return path.replace("file://", "");
+  }
+  return path;
+})();
+ZendeskChatApi.sendFile(realPath);
 ```
 
 # Next planned steps
